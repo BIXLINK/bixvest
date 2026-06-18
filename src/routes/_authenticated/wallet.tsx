@@ -1,18 +1,14 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/use-auth";
 import { AppLayout } from "@/components/app-layout";
 import { Wallet as WalletIcon, Lock, TrendingUp, TrendingDown } from "lucide-react";
+import { requireActiveOrAdmin } from "@/lib/require-active";
 
 export const Route = createFileRoute("/_authenticated/wallet")({
   head: () => ({ meta: [{ title: "Wallet — BIXVEST" }] }),
-  beforeLoad: async () => {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) return;
-    const { data: prof } = await supabase.from("profiles").select("membership_status").eq("id", data.user.id).maybeSingle();
-    if (prof && prof.membership_status !== "active") throw redirect({ to: "/activate" });
-  },
+  beforeLoad: requireActiveOrAdmin,
   component: WalletPage,
 });
 
