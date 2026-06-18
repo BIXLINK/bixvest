@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,15 +9,11 @@ import { Button } from "@/components/ui/button";
 import { Vault, Lock, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useState } from "react";
+import { requireActiveOrAdmin } from "@/lib/require-active";
 
 export const Route = createFileRoute("/_authenticated/vault")({
   head: () => ({ meta: [{ title: "VST Vault — BIXVEST" }] }),
-  beforeLoad: async () => {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) return;
-    const { data: prof } = await supabase.from("profiles").select("membership_status").eq("id", data.user.id).maybeSingle();
-    if (prof && prof.membership_status !== "active") throw redirect({ to: "/activate" });
-  },
+  beforeLoad: requireActiveOrAdmin,
   component: VaultPage,
 });
 
