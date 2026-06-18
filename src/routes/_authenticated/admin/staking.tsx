@@ -42,11 +42,11 @@ function StakingPage() {
         <h1 className="font-display text-2xl font-bold">Staking levels</h1>
         <div className="rounded-xl border border-border bg-card divide-y divide-border">
           {levels.map(l => (
-            <div key={l.level} className="grid grid-cols-[80px_1fr_200px_auto] items-center gap-3 px-5 py-3">
+            <div key={l.level} className="grid grid-cols-[60px_1fr] items-center gap-3 px-4 py-3 sm:grid-cols-[80px_1fr_200px_auto] sm:px-5">
               <div className="font-display font-semibold">L{l.level}</div>
               <div className="text-sm">{l.name}</div>
-              <Input type="number" value={edits[l.level] ?? ""} onChange={e => setEdits(s => ({ ...s, [l.level]: e.target.value }))} />
-              <Button size="sm" onClick={() => save(l.level)}>Save</Button>
+              <Input type="number" inputMode="numeric" className="col-span-2 sm:col-span-1" value={edits[l.level] ?? ""} onChange={e => setEdits(s => ({ ...s, [l.level]: e.target.value }))} />
+              <Button size="sm" className="col-span-2 sm:col-span-1" onClick={() => save(l.level)}>Save</Button>
             </div>
           ))}
         </div>
