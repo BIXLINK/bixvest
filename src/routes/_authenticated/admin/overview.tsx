@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getAdminAnalytics } from "@/lib/bixvest.functions";
 import { AdminLayout } from "@/components/admin-layout";
-import { Users, UserCheck, Coins, Lock, Megaphone } from "lucide-react";
+import { Users, UserCheck, Coins, Lock, Megaphone, ListChecks, Ticket, Clock } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/overview")({
   head: () => ({ meta: [{ title: "Admin overview — BIXVEST" }] }),
@@ -22,18 +22,21 @@ function Overview() {
     <AdminLayout>
       <div className="mx-auto max-w-6xl space-y-6">
         <div>
-          <h1 className="font-display text-3xl font-bold">Analytics</h1>
+          <h1 className="font-display text-2xl font-bold sm:text-3xl">Analytics</h1>
           <p className="mt-1 text-sm text-muted-foreground">Ecosystem overview.</p>
         </div>
         {isLoading ? (
           <div className="text-sm text-muted-foreground">Loading...</div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          <div className="grid gap-3 grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
             <Card label="Total users" value={fmt(data?.totalUsers ?? 0)} icon={Users} />
             <Card label="Active members" value={fmt(data?.activeMembers ?? 0)} icon={UserCheck} />
             <Card label="VST issued" value={fmt(data?.totalIssued ?? 0)} icon={Coins} />
             <Card label="VST staked" value={fmt(data?.totalStaked ?? 0)} icon={Lock} />
+            <Card label="Active tasks" value={fmt(data?.activeTasks ?? 0)} icon={ListChecks} />
             <Card label="Campaigns" value={fmt(data?.campaigns ?? 0)} icon={Megaphone} />
+            <Card label="Pending reviews" value={fmt(data?.pendingSubmissions ?? 0)} icon={Clock} />
+            <Card label="Codes (unused / used)" value={`${fmt(data?.codesUnused ?? 0)} / ${fmt(data?.codesUsed ?? 0)}`} icon={Ticket} />
           </div>
         )}
       </div>
