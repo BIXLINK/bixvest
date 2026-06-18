@@ -16,12 +16,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/rewards")({
   head: () => ({ meta: [{ title: "VST Rewards Hub — BIXVEST" }] }),
-  beforeLoad: async () => {
-    const { data } = await supabase.auth.getUser();
-    if (!data.user) return;
-    const { data: prof } = await supabase.from("profiles").select("membership_status").eq("id", data.user.id).maybeSingle();
-    if (prof && prof.membership_status !== "active") throw redirect({ to: "/activate" });
-  },
+  beforeLoad: requireActiveOrAdmin,
   component: RewardsPage,
 });
 
