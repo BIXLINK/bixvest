@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useProfile } from "@/hooks/use-auth";
 import { useServerFn } from "@tanstack/react-start";
@@ -9,9 +9,17 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Sparkles, KeyRound } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/activate")({
   head: () => ({ meta: [{ title: "Activate membership — BIXVEST" }] }),
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) return;
+    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
+    const isAdmin = (roles ?? []).some(r => r.role === "super_admin" || r.role === "admin");
+    if (isAdmin) throw redirect({ to: "/dashboard" });
+  },
   component: ActivatePage,
 });
 
