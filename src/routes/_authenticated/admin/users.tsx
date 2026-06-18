@@ -59,9 +59,9 @@ function UsersPage() {
   return (
     <AdminLayout>
       <div className="space-y-4">
-        <div className="flex items-center justify-between gap-3">
+        <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
           <h1 className="font-display text-2xl font-bold">Users</h1>
-          <Input placeholder="Search by name, email, or referral code" value={q} onChange={e => setQ(e.target.value)} className="max-w-sm" />
+          <Input placeholder="Search by name, email, or referral code" value={q} onChange={e => setQ(e.target.value)} className="sm:w-80" />
         </div>
         <div className="rounded-xl border border-border bg-card overflow-x-auto">
           <table className="w-full text-sm">
