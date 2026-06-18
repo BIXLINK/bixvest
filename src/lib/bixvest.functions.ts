@@ -175,8 +175,9 @@ export const setMembershipStatus = createServerFn({ method: "POST" })
   }).parse(input))
   .handler(async ({ data, context }) => {
     const admin = await assertAdmin(context.userId);
-    const patch: Record<string, unknown> = { membership_status: data.status };
-    if (data.status === "active") patch.activated_at = new Date().toISOString();
+    const patch = data.status === "active"
+      ? { membership_status: data.status, activated_at: new Date().toISOString() }
+      : { membership_status: data.status };
     const { error } = await admin.from("profiles").update(patch).eq("id", data.user_id);
     if (error) throw new Error(error.message);
     return { ok: true };
