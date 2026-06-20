@@ -19,15 +19,22 @@ import { Route as AuthenticatedVaultRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedRewardsRouteImport } from './routes/_authenticated/rewards'
 import { Route as AuthenticatedReferralsRouteImport } from './routes/_authenticated/referrals'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedInvestRouteImport } from './routes/_authenticated/invest'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDailyRouteImport } from './routes/_authenticated/daily'
 import { Route as AuthenticatedActivateRouteImport } from './routes/_authenticated/activate'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminTasksRouteImport } from './routes/_authenticated/admin/tasks'
 import { Route as AuthenticatedAdminStakingRouteImport } from './routes/_authenticated/admin/staking'
+import { Route as AuthenticatedAdminRewardsRouteImport } from './routes/_authenticated/admin/rewards'
 import { Route as AuthenticatedAdminOverviewRouteImport } from './routes/_authenticated/admin/overview'
+import { Route as AuthenticatedAdminLedgerRouteImport } from './routes/_authenticated/admin/ledger'
+import { Route as AuthenticatedAdminInvestRouteImport } from './routes/_authenticated/admin/invest'
+import { Route as AuthenticatedAdminEconomyRouteImport } from './routes/_authenticated/admin/economy'
 import { Route as AuthenticatedAdminCodesRouteImport } from './routes/_authenticated/admin/codes'
 import { Route as AuthenticatedAdminCampaignsRouteImport } from './routes/_authenticated/admin/campaigns'
+import { Route as AuthenticatedAdminAuditRouteImport } from './routes/_authenticated/admin/audit'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -78,9 +85,19 @@ const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedInvestRoute = AuthenticatedInvestRouteImport.update({
+  id: '/invest',
+  path: '/invest',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDailyRoute = AuthenticatedDailyRouteImport.update({
+  id: '/daily',
+  path: '/daily',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedActivateRoute = AuthenticatedActivateRouteImport.update({
@@ -109,10 +126,34 @@ const AuthenticatedAdminStakingRoute =
     path: '/staking',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminRewardsRoute =
+  AuthenticatedAdminRewardsRouteImport.update({
+    id: '/rewards',
+    path: '/rewards',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminOverviewRoute =
   AuthenticatedAdminOverviewRouteImport.update({
     id: '/overview',
     path: '/overview',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminLedgerRoute =
+  AuthenticatedAdminLedgerRouteImport.update({
+    id: '/ledger',
+    path: '/ledger',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminInvestRoute =
+  AuthenticatedAdminInvestRouteImport.update({
+    id: '/invest',
+    path: '/invest',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminEconomyRoute =
+  AuthenticatedAdminEconomyRouteImport.update({
+    id: '/economy',
+    path: '/economy',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
 const AuthenticatedAdminCodesRoute = AuthenticatedAdminCodesRouteImport.update({
@@ -126,6 +167,11 @@ const AuthenticatedAdminCampaignsRoute =
     path: '/campaigns',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminAuditRoute = AuthenticatedAdminAuditRouteImport.update({
+  id: '/audit',
+  path: '/audit',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -134,15 +180,22 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/activate': typeof AuthenticatedActivateRoute
+  '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/invest': typeof AuthenticatedInvestRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/referrals': typeof AuthenticatedReferralsRoute
   '/rewards': typeof AuthenticatedRewardsRoute
   '/vault': typeof AuthenticatedVaultRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/campaigns': typeof AuthenticatedAdminCampaignsRoute
   '/admin/codes': typeof AuthenticatedAdminCodesRoute
+  '/admin/economy': typeof AuthenticatedAdminEconomyRoute
+  '/admin/invest': typeof AuthenticatedAdminInvestRoute
+  '/admin/ledger': typeof AuthenticatedAdminLedgerRoute
   '/admin/overview': typeof AuthenticatedAdminOverviewRoute
+  '/admin/rewards': typeof AuthenticatedAdminRewardsRoute
   '/admin/staking': typeof AuthenticatedAdminStakingRoute
   '/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -154,15 +207,22 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/activate': typeof AuthenticatedActivateRoute
+  '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/invest': typeof AuthenticatedInvestRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/referrals': typeof AuthenticatedReferralsRoute
   '/rewards': typeof AuthenticatedRewardsRoute
   '/vault': typeof AuthenticatedVaultRoute
   '/wallet': typeof AuthenticatedWalletRoute
+  '/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/admin/campaigns': typeof AuthenticatedAdminCampaignsRoute
   '/admin/codes': typeof AuthenticatedAdminCodesRoute
+  '/admin/economy': typeof AuthenticatedAdminEconomyRoute
+  '/admin/invest': typeof AuthenticatedAdminInvestRoute
+  '/admin/ledger': typeof AuthenticatedAdminLedgerRoute
   '/admin/overview': typeof AuthenticatedAdminOverviewRoute
+  '/admin/rewards': typeof AuthenticatedAdminRewardsRoute
   '/admin/staking': typeof AuthenticatedAdminStakingRoute
   '/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -176,15 +236,22 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/_authenticated/activate': typeof AuthenticatedActivateRoute
+  '/_authenticated/daily': typeof AuthenticatedDailyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/invest': typeof AuthenticatedInvestRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/referrals': typeof AuthenticatedReferralsRoute
   '/_authenticated/rewards': typeof AuthenticatedRewardsRoute
   '/_authenticated/vault': typeof AuthenticatedVaultRoute
   '/_authenticated/wallet': typeof AuthenticatedWalletRoute
+  '/_authenticated/admin/audit': typeof AuthenticatedAdminAuditRoute
   '/_authenticated/admin/campaigns': typeof AuthenticatedAdminCampaignsRoute
   '/_authenticated/admin/codes': typeof AuthenticatedAdminCodesRoute
+  '/_authenticated/admin/economy': typeof AuthenticatedAdminEconomyRoute
+  '/_authenticated/admin/invest': typeof AuthenticatedAdminInvestRoute
+  '/_authenticated/admin/ledger': typeof AuthenticatedAdminLedgerRoute
   '/_authenticated/admin/overview': typeof AuthenticatedAdminOverviewRoute
+  '/_authenticated/admin/rewards': typeof AuthenticatedAdminRewardsRoute
   '/_authenticated/admin/staking': typeof AuthenticatedAdminStakingRoute
   '/_authenticated/admin/tasks': typeof AuthenticatedAdminTasksRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -198,15 +265,22 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/activate'
+    | '/daily'
     | '/dashboard'
+    | '/invest'
     | '/profile'
     | '/referrals'
     | '/rewards'
     | '/vault'
     | '/wallet'
+    | '/admin/audit'
     | '/admin/campaigns'
     | '/admin/codes'
+    | '/admin/economy'
+    | '/admin/invest'
+    | '/admin/ledger'
     | '/admin/overview'
+    | '/admin/rewards'
     | '/admin/staking'
     | '/admin/tasks'
     | '/admin/users'
@@ -218,15 +292,22 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/activate'
+    | '/daily'
     | '/dashboard'
+    | '/invest'
     | '/profile'
     | '/referrals'
     | '/rewards'
     | '/vault'
     | '/wallet'
+    | '/admin/audit'
     | '/admin/campaigns'
     | '/admin/codes'
+    | '/admin/economy'
+    | '/admin/invest'
+    | '/admin/ledger'
     | '/admin/overview'
+    | '/admin/rewards'
     | '/admin/staking'
     | '/admin/tasks'
     | '/admin/users'
@@ -239,15 +320,22 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/activate'
+    | '/_authenticated/daily'
     | '/_authenticated/dashboard'
+    | '/_authenticated/invest'
     | '/_authenticated/profile'
     | '/_authenticated/referrals'
     | '/_authenticated/rewards'
     | '/_authenticated/vault'
     | '/_authenticated/wallet'
+    | '/_authenticated/admin/audit'
     | '/_authenticated/admin/campaigns'
     | '/_authenticated/admin/codes'
+    | '/_authenticated/admin/economy'
+    | '/_authenticated/admin/invest'
+    | '/_authenticated/admin/ledger'
     | '/_authenticated/admin/overview'
+    | '/_authenticated/admin/rewards'
     | '/_authenticated/admin/staking'
     | '/_authenticated/admin/tasks'
     | '/_authenticated/admin/users'
@@ -333,11 +421,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfileRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/invest': {
+      id: '/_authenticated/invest'
+      path: '/invest'
+      fullPath: '/invest'
+      preLoaderRoute: typeof AuthenticatedInvestRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/daily': {
+      id: '/_authenticated/daily'
+      path: '/daily'
+      fullPath: '/daily'
+      preLoaderRoute: typeof AuthenticatedDailyRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/activate': {
@@ -375,11 +477,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminStakingRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/rewards': {
+      id: '/_authenticated/admin/rewards'
+      path: '/rewards'
+      fullPath: '/admin/rewards'
+      preLoaderRoute: typeof AuthenticatedAdminRewardsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/overview': {
       id: '/_authenticated/admin/overview'
       path: '/overview'
       fullPath: '/admin/overview'
       preLoaderRoute: typeof AuthenticatedAdminOverviewRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/ledger': {
+      id: '/_authenticated/admin/ledger'
+      path: '/ledger'
+      fullPath: '/admin/ledger'
+      preLoaderRoute: typeof AuthenticatedAdminLedgerRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/invest': {
+      id: '/_authenticated/admin/invest'
+      path: '/invest'
+      fullPath: '/admin/invest'
+      preLoaderRoute: typeof AuthenticatedAdminInvestRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/economy': {
+      id: '/_authenticated/admin/economy'
+      path: '/economy'
+      fullPath: '/admin/economy'
+      preLoaderRoute: typeof AuthenticatedAdminEconomyRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/codes': {
@@ -396,13 +526,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCampaignsRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/audit': {
+      id: '/_authenticated/admin/audit'
+      path: '/audit'
+      fullPath: '/admin/audit'
+      preLoaderRoute: typeof AuthenticatedAdminAuditRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminAuditRoute: typeof AuthenticatedAdminAuditRoute
   AuthenticatedAdminCampaignsRoute: typeof AuthenticatedAdminCampaignsRoute
   AuthenticatedAdminCodesRoute: typeof AuthenticatedAdminCodesRoute
+  AuthenticatedAdminEconomyRoute: typeof AuthenticatedAdminEconomyRoute
+  AuthenticatedAdminInvestRoute: typeof AuthenticatedAdminInvestRoute
+  AuthenticatedAdminLedgerRoute: typeof AuthenticatedAdminLedgerRoute
   AuthenticatedAdminOverviewRoute: typeof AuthenticatedAdminOverviewRoute
+  AuthenticatedAdminRewardsRoute: typeof AuthenticatedAdminRewardsRoute
   AuthenticatedAdminStakingRoute: typeof AuthenticatedAdminStakingRoute
   AuthenticatedAdminTasksRoute: typeof AuthenticatedAdminTasksRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -410,9 +552,14 @@ interface AuthenticatedAdminRouteRouteChildren {
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminAuditRoute: AuthenticatedAdminAuditRoute,
     AuthenticatedAdminCampaignsRoute: AuthenticatedAdminCampaignsRoute,
     AuthenticatedAdminCodesRoute: AuthenticatedAdminCodesRoute,
+    AuthenticatedAdminEconomyRoute: AuthenticatedAdminEconomyRoute,
+    AuthenticatedAdminInvestRoute: AuthenticatedAdminInvestRoute,
+    AuthenticatedAdminLedgerRoute: AuthenticatedAdminLedgerRoute,
     AuthenticatedAdminOverviewRoute: AuthenticatedAdminOverviewRoute,
+    AuthenticatedAdminRewardsRoute: AuthenticatedAdminRewardsRoute,
     AuthenticatedAdminStakingRoute: AuthenticatedAdminStakingRoute,
     AuthenticatedAdminTasksRoute: AuthenticatedAdminTasksRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
@@ -426,7 +573,9 @@ const AuthenticatedAdminRouteRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRouteRoute: typeof AuthenticatedAdminRouteRouteWithChildren
   AuthenticatedActivateRoute: typeof AuthenticatedActivateRoute
+  AuthenticatedDailyRoute: typeof AuthenticatedDailyRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedInvestRoute: typeof AuthenticatedInvestRoute
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedReferralsRoute: typeof AuthenticatedReferralsRoute
   AuthenticatedRewardsRoute: typeof AuthenticatedRewardsRoute
@@ -437,7 +586,9 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRouteRoute: AuthenticatedAdminRouteRouteWithChildren,
   AuthenticatedActivateRoute: AuthenticatedActivateRoute,
+  AuthenticatedDailyRoute: AuthenticatedDailyRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedInvestRoute: AuthenticatedInvestRoute,
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedReferralsRoute: AuthenticatedReferralsRoute,
   AuthenticatedRewardsRoute: AuthenticatedRewardsRoute,
