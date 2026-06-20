@@ -2,7 +2,7 @@ import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { type ReactNode, useState } from "react";
 import {
   LayoutDashboard, Sparkles, Vault, Wallet, Users, User as UserIcon,
-  LogOut, Shield, Menu, X, Bell,
+  LogOut, Shield, Menu, X, Bell, Sun, TrendingUp,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useIsAdmin } from "@/hooks/use-auth";
@@ -11,11 +11,21 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/daily", label: "Daily", icon: Sun },
   { to: "/rewards", label: "Rewards", icon: Sparkles },
   { to: "/vault", label: "Vault", icon: Vault },
+  { to: "/invest", label: "Invest", icon: TrendingUp },
   { to: "/wallet", label: "Wallet", icon: Wallet },
   { to: "/referrals", label: "Referrals", icon: Users },
   { to: "/profile", label: "Profile", icon: UserIcon },
+] as const;
+
+const mobileNav = [
+  { to: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { to: "/daily", label: "Daily", icon: Sun },
+  { to: "/rewards", label: "Earn", icon: Sparkles },
+  { to: "/wallet", label: "Wallet", icon: Wallet },
+  { to: "/profile", label: "Me", icon: UserIcon },
 ] as const;
 
 function formatVst(n: number) {
@@ -45,7 +55,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </div>
         </Link>
       </div>
-      <nav className="flex-1 px-3 space-y-1">
+      <nav className="flex-1 overflow-y-auto px-3 space-y-1">
         {navItems.map(item => {
           const active = pathname === item.to;
           return (
@@ -76,14 +86,22 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 : "text-sidebar-foreground/80 hover:bg-sidebar-accent/60",
             )}
           >
-            <Shield className="h-4 w-4" /> Admin
+            <Shield className="h-4 w-4" /> Command Center
           </Link>
         )}
       </nav>
       <div className="border-t border-sidebar-border/50 p-4">
         <div className="mb-3 rounded-lg bg-sidebar-accent/40 p-3">
-          <div className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">VST Balance</div>
-          <div className="font-display text-lg font-semibold">{formatVst(Number(profile?.vst_balance ?? 0))}</div>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">VST Balance</div>
+              <div className="font-display text-lg font-semibold">{formatVst(Number(profile?.vst_balance ?? 0))}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">BIX</div>
+              <div className="font-display text-base font-semibold">{Number((profile as any)?.bix_score ?? 0)}</div>
+            </div>
+          </div>
         </div>
         <button
           onClick={signOut}
@@ -97,10 +115,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen w-full bg-background">
-      {/* Desktop sidebar */}
       <aside className="hidden w-64 shrink-0 border-r border-sidebar-border lg:block">{SidebarInner}</aside>
 
-      {/* Mobile drawer */}
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setOpen(false)} />
@@ -127,9 +143,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
         <main className="flex-1 px-4 py-6 pb-24 lg:px-8 lg:pb-8">{children}</main>
 
-        {/* Mobile bottom nav */}
         <nav className="fixed bottom-0 left-0 right-0 z-40 grid grid-cols-5 border-t border-border bg-background/95 backdrop-blur lg:hidden">
-          {navItems.slice(0, 5).map(item => {
+          {mobileNav.map(item => {
             const active = pathname === item.to;
             return (
               <Link key={item.to} to={item.to}
