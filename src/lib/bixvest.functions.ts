@@ -477,7 +477,7 @@ export const getLedgerPage = createServerFn({ method: "POST" })
     let q = admin.from("wallet_transactions").select("*, profiles(full_name, email)", { count: "exact" })
       .order("created_at", { ascending: false }).range(data.offset, data.offset + data.limit - 1);
     if (data.user_id) q = q.eq("user_id", data.user_id);
-    if (data.type) q = q.eq("type", data.type);
+    if (data.type) q = q.eq("type", data.type as any);
     const { data: rows, count, error } = await q;
     if (error) throw new Error(error.message);
     return { rows: rows ?? [], total: count ?? 0 };
