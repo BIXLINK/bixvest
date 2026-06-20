@@ -47,39 +47,307 @@ export type Database = {
         }
         Relationships: []
       }
+      app_config: {
+        Row: {
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
+      audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          payload: Json
+          target_id: string | null
+          target_type: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: []
+      }
+      campaign_participations: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          id: string
+          proof: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          user_id: string
+          vst_awarded: number
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          id?: string
+          proof?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id: string
+          vst_awarded?: number
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          proof?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          user_id?: string
+          vst_awarded?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_participations_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns: {
         Row: {
+          budget: number
           created_at: string
           created_by: string | null
           description: string
+          end_at: string | null
           ends_at: string | null
           id: string
+          min_bix_score: number
+          spent: number
+          start_at: string | null
           starts_at: string | null
           status: Database["public"]["Enums"]["task_status"]
+          target_audience: Json
           title: string
           vst_reward: number
         }
         Insert: {
+          budget?: number
           created_at?: string
           created_by?: string | null
           description?: string
+          end_at?: string | null
           ends_at?: string | null
           id?: string
+          min_bix_score?: number
+          spent?: number
+          start_at?: string | null
           starts_at?: string | null
           status?: Database["public"]["Enums"]["task_status"]
+          target_audience?: Json
           title: string
           vst_reward?: number
         }
         Update: {
+          budget?: number
           created_at?: string
           created_by?: string | null
           description?: string
+          end_at?: string | null
           ends_at?: string | null
           id?: string
+          min_bix_score?: number
+          spent?: number
+          start_at?: string | null
           starts_at?: string | null
           status?: Database["public"]["Enums"]["task_status"]
+          target_audience?: Json
           title?: string
           vst_reward?: number
+        }
+        Relationships: []
+      }
+      daily_claims: {
+        Row: {
+          amount: number
+          claim_date: string
+          claim_type: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          claim_date?: string
+          claim_type: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          claim_date?: string
+          claim_type?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      invest_holdings: {
+        Row: {
+          amount: number
+          ended_at: string | null
+          id: string
+          product_id: string
+          started_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          ended_at?: string | null
+          id?: string
+          product_id: string
+          started_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          ended_at?: string | null
+          id?: string
+          product_id?: string
+          started_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invest_holdings_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "invest_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invest_products: {
+        Row: {
+          apr: number
+          created_at: string
+          description: string
+          id: string
+          min_amount: number
+          name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          apr?: number
+          created_at?: string
+          description?: string
+          id?: string
+          min_amount?: number
+          name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          apr?: number
+          created_at?: string
+          description?: string
+          id?: string
+          min_amount?: number
+          name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      invest_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          created_at: string
+          id: string
+          note: string | null
+          reference_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          balance_after?: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          reference_id?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          created_at?: string
+          id?: string
+          note?: string | null
+          reference_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      invest_wallet: {
+        Row: {
+          balance: number
+          currency: string
+          locked: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          currency?: string
+          locked?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          currency?: string
+          locked?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -110,46 +378,88 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_missions: {
+        Row: {
+          description: string
+          id: string
+          order_index: number
+          reward: number
+          title: string
+        }
+        Insert: {
+          description: string
+          id: string
+          order_index?: number
+          reward?: number
+          title: string
+        }
+        Update: {
+          description?: string
+          id?: string
+          order_index?: number
+          reward?: number
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           activated_at: string | null
+          bix_level: number
+          bix_score: number
           created_at: string
           current_stake_level: number
+          current_streak: number
           email: string
+          email_normalized: string | null
           full_name: string
           id: string
+          last_claim_date: string | null
           membership_status: Database["public"]["Enums"]["membership_status"]
           referral_code: string
           referred_by: string | null
           updated_at: string
+          verified: boolean
           vst_balance: number
           vst_locked: number
         }
         Insert: {
           activated_at?: string | null
+          bix_level?: number
+          bix_score?: number
           created_at?: string
           current_stake_level?: number
+          current_streak?: number
           email: string
+          email_normalized?: string | null
           full_name?: string
           id: string
+          last_claim_date?: string | null
           membership_status?: Database["public"]["Enums"]["membership_status"]
           referral_code: string
           referred_by?: string | null
           updated_at?: string
+          verified?: boolean
           vst_balance?: number
           vst_locked?: number
         }
         Update: {
           activated_at?: string | null
+          bix_level?: number
+          bix_score?: number
           created_at?: string
           current_stake_level?: number
+          current_streak?: number
           email?: string
+          email_normalized?: string | null
           full_name?: string
           id?: string
+          last_claim_date?: string | null
           membership_status?: Database["public"]["Enums"]["membership_status"]
           referral_code?: string
           referred_by?: string | null
           updated_at?: string
+          verified?: boolean
           vst_balance?: number
           vst_locked?: number
         }
@@ -162,6 +472,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      rate_limits: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referral_rewards: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          referred_id: string
+          referrer_id: string
+          status: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          referred_id: string
+          referrer_id: string
+          status?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          referred_id?: string
+          referrer_id?: string
+          status?: string
+        }
+        Relationships: []
       }
       referrals: {
         Row: {
@@ -336,6 +694,44 @@ export type Database = {
         }
         Relationships: []
       }
+      user_missions: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          mission_id: string
+          status: string
+          user_id: string
+          vst_awarded: number
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          mission_id: string
+          status?: string
+          user_id: string
+          vst_awarded?: number
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          mission_id?: string
+          status?: string
+          user_id?: string
+          vst_awarded?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_missions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_missions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -362,10 +758,14 @@ export type Database = {
           amount: number
           balance_after: number
           created_at: string
+          destination: string
           id: string
           note: string
           reference_id: string | null
           reference_table: string | null
+          source: string
+          status: string
+          tx_ref: string
           type: Database["public"]["Enums"]["tx_type"]
           user_id: string
         }
@@ -373,10 +773,14 @@ export type Database = {
           amount: number
           balance_after: number
           created_at?: string
+          destination?: string
           id?: string
           note?: string
           reference_id?: string | null
           reference_table?: string | null
+          source?: string
+          status?: string
+          tx_ref?: string
           type: Database["public"]["Enums"]["tx_type"]
           user_id: string
         }
@@ -384,10 +788,14 @@ export type Database = {
           amount?: number
           balance_after?: number
           created_at?: string
+          destination?: string
           id?: string
           note?: string
           reference_id?: string | null
           reference_table?: string | null
+          source?: string
+          status?: string
+          tx_ref?: string
           type?: Database["public"]["Enums"]["tx_type"]
           user_id?: string
         }
@@ -398,6 +806,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_rate_limit: {
+        Args: {
+          _action: string
+          _max: number
+          _user_id: string
+          _window_seconds: number
+        }
+        Returns: boolean
+      }
       generate_referral_code: { Args: never; Returns: string }
       has_role: {
         Args: {
@@ -407,6 +824,33 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      log_audit: {
+        Args: {
+          _action: string
+          _actor: string
+          _payload: Json
+          _target_id: string
+          _target_type: string
+        }
+        Returns: undefined
+      }
+      post_ledger: {
+        Args: {
+          _amount: number
+          _destination?: string
+          _note?: string
+          _reference_id?: string
+          _reference_table?: string
+          _source?: string
+          _type: string
+          _user_id: string
+        }
+        Returns: {
+          balance_after: number
+          tx_id: string
+        }[]
+      }
+      recompute_bix_score: { Args: { _user_id: string }; Returns: number }
     }
     Enums: {
       app_role: "super_admin" | "admin" | "user"

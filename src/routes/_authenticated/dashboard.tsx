@@ -1,11 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile } from "@/hooks/use-auth";
 import { AppLayout } from "@/components/app-layout";
-import { Sparkles, Vault, Wallet as WalletIcon, Users, ArrowRight, TrendingUp } from "lucide-react";
+import { Sparkles, Vault, Wallet as WalletIcon, Users, ArrowRight, TrendingUp, Sun, Award, Check } from "lucide-react";
 import { Link as TLink } from "@tanstack/react-router";
 import { requireActiveOrAdmin } from "@/lib/require-active";
+import { completeMission } from "@/lib/bixvest.functions";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({ meta: [{ title: "Dashboard — BIXVEST" }] }),
@@ -20,15 +24,16 @@ function fmt(n: number | null | undefined) {
 function Dashboard() {
   const { data: profile } = useProfile();
   const userId = profile?.id;
+  const qc = useQueryClient();
+  const complete = useServerFn(completeMission);
 
   const { data: recentTx = [] } = useQuery({
     queryKey: ["recent-tx", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from("wallet_transactions").select("*").eq("user_id", userId!)
         .order("created_at", { ascending: false }).limit(5);
-      if (error) throw error;
       return data ?? [];
     },
   });
@@ -41,31 +46,100 @@ function Dashboard() {
     },
   });
 
+  const { data: missions = [] } = useQuery({
+    queryKey: ["missions", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data } = await (supabase as any).from("user_missions")
+        .select("*, onboarding_missions(*)")
+        .eq("user_id", userId)
+        .order("created_at");
+      return data ?? [];
+    },
+  });
+
   const nextLevel = stakeLevels.find(l => l.level === (profile?.current_stake_level ?? 0) + 1);
   const progress = nextLevel
     ? Math.min(100, (Number(profile?.vst_balance ?? 0) / Number(nextLevel.vst_required)) * 100)
     : 100;
+  const pendingMissions = missions.filter((m: any) => m.status === "pending");
+
+  async function tryMission(id: string) {
+    try {
+      const r = await complete({ data: { mission_id: id } });
+      toast.success(`+${r.awarded} VST`);
+      qc.invalidateQueries();
+    } catch (e) { toast.error((e as Error).message); }
+  }
+
+  const bix = Number((profile as any)?.bix_score ?? 0);
+  const bixLevel = Number((profile as any)?.bix_level ?? 1);
+  const streak = Number((profile as any)?.current_streak ?? 0);
 
   return (
     <AppLayout>
       <div className="mx-auto max-w-7xl space-y-6">
-        <div>
-          <div className="text-xs uppercase tracking-wider text-muted-foreground">Welcome back</div>
-          <h1 className="font-display text-3xl font-bold">{profile?.full_name || "Member"}</h1>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <div className="text-xs uppercase tracking-wider text-muted-foreground">Welcome back</div>
+            <h1 className="font-display text-3xl font-bold">{profile?.full_name || "Member"}</h1>
+          </div>
+          <div className="flex gap-2">
+            <Link to="/daily" className="rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground inline-flex items-center gap-1">
+              <Sun className="h-3 w-3" /> Daily Hub
+            </Link>
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard label="VST Balance" value={fmt(profile?.vst_balance)} icon={WalletIcon} hero />
-          <StatCard label="Locked (Staked)" value={fmt(profile?.vst_locked)} icon={Vault} />
+          <StatCard label="BIX Score" value={`${bix} · L${bixLevel}`} icon={Award} />
+          <StatCard label="Streak" value={`${streak} days`} icon={Sun} />
           <StatCard label="Stake Level" value={`L${profile?.current_stake_level ?? 0}`} icon={TrendingUp} />
-          <StatCard label="Membership" value={profile?.membership_status?.toUpperCase() ?? "—"} icon={Sparkles} />
         </div>
+
+        {pendingMissions.length > 0 && (
+          <div className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/5 to-transparent p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs uppercase tracking-wider text-primary">Welcome Journey</div>
+                <div className="font-display text-xl font-semibold">Complete these to earn VST</div>
+              </div>
+              <div className="text-xs text-muted-foreground">{missions.length - pendingMissions.length} / {missions.length}</div>
+            </div>
+            <div className="mt-4 space-y-2">
+              {missions.map((m: any) => (
+                <div key={m.id} className="flex items-center justify-between rounded-lg border border-border bg-card px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    {m.status === "completed" ? (
+                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-success/20 text-success">
+                        <Check className="h-4 w-4" />
+                      </div>
+                    ) : (
+                      <div className="h-7 w-7 rounded-full border border-dashed border-border" />
+                    )}
+                    <div>
+                      <div className="text-sm font-medium">{m.onboarding_missions?.title}</div>
+                      <div className="text-xs text-muted-foreground">{m.onboarding_missions?.description}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="text-sm font-medium text-primary">+{m.onboarding_missions?.reward} VST</div>
+                    {m.status === "pending" && (
+                      <Button size="sm" onClick={() => tryMission(m.mission_id)}>Claim</Button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {nextLevel && (
           <div className="rounded-xl border border-border bg-card p-6">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-xs uppercase tracking-wider text-muted-foreground">Next level</div>
+                <div className="text-xs uppercase tracking-wider text-muted-foreground">Next vault tier</div>
                 <div className="font-display text-xl font-semibold">{nextLevel.name} — {fmt(nextLevel.vst_required)} VST</div>
               </div>
               <Link to="/vault" className="text-sm text-primary hover:underline">Go to Vault <ArrowRight className="ml-1 inline h-3 w-3" /></Link>
@@ -78,8 +152,8 @@ function Dashboard() {
         )}
 
         <div className="grid gap-4 lg:grid-cols-3">
-          <ActionCard to="/rewards" title="Rewards Hub" desc="Earn VST through tasks, campaigns, and challenges." icon={Sparkles} />
-          <ActionCard to="/vault" title="Open Vault" desc="Stake VST into progressive growth levels." icon={Vault} />
+          <ActionCard to="/rewards" title="Rewards Hub" desc="Tasks, campaigns, and challenges." icon={Sparkles} />
+          <ActionCard to="/daily" title="Daily Hub" desc="Stack login, learning & community bonuses." icon={Sun} />
           <ActionCard to="/referrals" title="Invite" desc={`Your code: ${profile?.referral_code ?? "—"}`} icon={Users} />
         </div>
 
@@ -89,7 +163,7 @@ function Dashboard() {
             <Link to="/wallet" className="text-xs text-primary hover:underline">View all</Link>
           </div>
           {recentTx.length === 0 ? (
-            <div className="p-8 text-center text-sm text-muted-foreground">No activity yet. Start with a task in the Rewards Hub.</div>
+            <div className="p-8 text-center text-sm text-muted-foreground">No activity yet. Start with the Daily Hub.</div>
           ) : (
             <ul className="divide-y divide-border">
               {recentTx.map(t => (
