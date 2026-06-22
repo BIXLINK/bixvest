@@ -860,7 +860,16 @@ export type Database = {
       submission_status: "pending" | "approved" | "rejected"
       task_status: "draft" | "active" | "paused" | "ended"
       task_type: "engagement" | "community" | "brand" | "challenge"
-      tx_type: "earn" | "spend" | "stake" | "unstake" | "admin_adjust"
+      tx_type:
+        | "earn"
+        | "spend"
+        | "stake"
+        | "unstake"
+        | "admin_adjust"
+        | "referral"
+        | "daily"
+        | "mission"
+        | "campaign"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -995,7 +1004,17 @@ export const Constants = {
       submission_status: ["pending", "approved", "rejected"],
       task_status: ["draft", "active", "paused", "ended"],
       task_type: ["engagement", "community", "brand", "challenge"],
-      tx_type: ["earn", "spend", "stake", "unstake", "admin_adjust"],
+      tx_type: [
+        "earn",
+        "spend",
+        "stake",
+        "unstake",
+        "admin_adjust",
+        "referral",
+        "daily",
+        "mission",
+        "campaign",
+      ],
     },
   },
 } as const
