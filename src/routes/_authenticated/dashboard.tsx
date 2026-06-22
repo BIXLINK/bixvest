@@ -73,6 +73,25 @@ function Dashboard() {
     } catch (e) { toast.error((e as Error).message); }
   }
 
+  // Auto-trigger the verify_email mission once the user has confirmed their email.
+  const { user } = useSession();
+  const autoTried = useRef(false);
+  useEffect(() => {
+    if (autoTried.current) return;
+    if (!user?.email_confirmed_at) return;
+    const verifyPending = missions.find(
+      (m: any) => m.mission_id === "verify_email" && m.status === "pending",
+    );
+    if (!verifyPending) return;
+    autoTried.current = true;
+    complete({ data: { mission_id: "verify_email" } })
+      .then((r: any) => {
+        if (r?.awarded > 0) toast.success(`Email verified · +${r.awarded} VST`);
+        qc.invalidateQueries();
+      })
+      .catch(() => { autoTried.current = false; });
+  }, [user?.email_confirmed_at, missions, complete, qc]);
+
   const bix = Number((profile as any)?.bix_score ?? 0);
   const bixLevel = Number((profile as any)?.bix_level ?? 1);
   const streak = Number((profile as any)?.current_streak ?? 0);
