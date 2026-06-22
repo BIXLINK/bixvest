@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useProfile } from "@/hooks/use-auth";
+import { useProfile, useSession } from "@/hooks/use-auth";
 import { AppLayout } from "@/components/app-layout";
 import { Sparkles, Vault, Wallet as WalletIcon, Users, ArrowRight, TrendingUp, Sun, Award, Check } from "lucide-react";
 import { Link as TLink } from "@tanstack/react-router";
