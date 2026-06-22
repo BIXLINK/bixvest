@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useProfile } from "@/hooks/use-auth";
+import { useProfile, useSession } from "@/hooks/use-auth";
 import { AppLayout } from "@/components/app-layout";
 import { Sparkles, Vault, Wallet as WalletIcon, Users, ArrowRight, TrendingUp, Sun, Award, Check } from "lucide-react";
 import { Link as TLink } from "@tanstack/react-router";
@@ -71,6 +72,25 @@ function Dashboard() {
       qc.invalidateQueries();
     } catch (e) { toast.error((e as Error).message); }
   }
+
+  // Auto-trigger the verify_email mission once the user has confirmed their email.
+  const { user } = useSession();
+  const autoTried = useRef(false);
+  useEffect(() => {
+    if (autoTried.current) return;
+    if (!user?.email_confirmed_at) return;
+    const verifyPending = missions.find(
+      (m: any) => m.mission_id === "verify_email" && m.status === "pending",
+    );
+    if (!verifyPending) return;
+    autoTried.current = true;
+    complete({ data: { mission_id: "verify_email" } })
+      .then((r: any) => {
+        if (r?.awarded > 0) toast.success(`Email verified · +${r.awarded} VST`);
+        qc.invalidateQueries();
+      })
+      .catch(() => { autoTried.current = false; });
+  }, [user?.email_confirmed_at, missions, complete, qc]);
 
   const bix = Number((profile as any)?.bix_score ?? 0);
   const bixLevel = Number((profile as any)?.bix_level ?? 1);
