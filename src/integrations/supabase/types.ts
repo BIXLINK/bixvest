@@ -16,36 +16,65 @@ export type Database = {
     Tables: {
       activation_codes: {
         Row: {
+          amount: number | null
           assigned_email: string | null
           code: string
           created_at: string
           created_by: string | null
+          currency: string | null
+          email: string | null
+          expires_at: string | null
+          gateway: string | null
+          generated_by: string
           id: string
+          payment_id: string | null
           status: Database["public"]["Enums"]["code_status"]
           used_at: string | null
           used_by: string | null
         }
         Insert: {
+          amount?: number | null
           assigned_email?: string | null
           code: string
           created_at?: string
           created_by?: string | null
+          currency?: string | null
+          email?: string | null
+          expires_at?: string | null
+          gateway?: string | null
+          generated_by?: string
           id?: string
+          payment_id?: string | null
           status?: Database["public"]["Enums"]["code_status"]
           used_at?: string | null
           used_by?: string | null
         }
         Update: {
+          amount?: number | null
           assigned_email?: string | null
           code?: string
           created_at?: string
           created_by?: string | null
+          currency?: string | null
+          email?: string | null
+          expires_at?: string | null
+          gateway?: string | null
+          generated_by?: string
           id?: string
+          payment_id?: string | null
           status?: Database["public"]["Enums"]["code_status"]
           used_at?: string | null
           used_by?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "activation_codes_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       app_config: {
         Row: {
@@ -401,6 +430,59 @@ export type Database = {
           title?: string
         }
         Relationships: []
+      }
+      payments: {
+        Row: {
+          activation_code_id: string | null
+          amount: number
+          created_at: string
+          currency: string
+          email: string
+          gateway: string
+          id: string
+          payment_reference: string
+          raw: Json
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          activation_code_id?: string | null
+          amount: number
+          created_at?: string
+          currency?: string
+          email: string
+          gateway: string
+          id?: string
+          payment_reference: string
+          raw?: Json
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          activation_code_id?: string | null
+          amount?: number
+          created_at?: string
+          currency?: string
+          email?: string
+          gateway?: string
+          id?: string
+          payment_reference?: string
+          raw?: Json
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_activation_code_id_fkey"
+            columns: ["activation_code_id"]
+            isOneToOne: false
+            referencedRelation: "activation_codes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -870,6 +952,7 @@ export type Database = {
         | "daily"
         | "mission"
         | "campaign"
+        | "activation_payment"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1014,6 +1097,7 @@ export const Constants = {
         "daily",
         "mission",
         "campaign",
+        "activation_payment",
       ],
     },
   },
