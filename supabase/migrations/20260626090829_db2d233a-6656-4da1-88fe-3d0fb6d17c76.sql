@@ -1,0 +1,2 @@
+REVOKE EXECUTE ON FUNCTION public.post_ledger(uuid, text, numeric, text, text, text, text, uuid) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION public.post_ledger(uuid, text, numeric, text, text, text, text, uuid) TO service_role;
