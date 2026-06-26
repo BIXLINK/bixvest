@@ -46,10 +46,7 @@ function AuthPage() {
           <h1 className="mt-4 font-display text-4xl font-bold leading-tight text-balance">
             Join the VST-powered ecosystem.
           </h1>
-          <p className="mt-3 max-w-md text-white/70">
-            Earn through participation. Stake into progressive levels. Grow your digital activity
-            profile.
-          </p>
+          <p className="mt-3 max-w-md text-white/70">Earn through participation. Stake into progressive levels. Grow your digital activity profile.</p>
         </div>
         <div className="text-xs text-white/50">© {new Date().getFullYear()} Bixvest Holdings</div>
       </div>
@@ -67,15 +64,9 @@ function AuthPage() {
               <TabsTrigger value="signin">Sign in</TabsTrigger>
               <TabsTrigger value="signup">Create account</TabsTrigger>
             </TabsList>
-            <TabsContent value="signin">
-              <SignInForm onForgot={() => setTab("forgot")} />
-            </TabsContent>
-            <TabsContent value="signup">
-              <SignUpForm referralFromUrl={search.ref} />
-            </TabsContent>
-            <TabsContent value="forgot">
-              <ForgotForm onBack={() => setTab("signin")} />
-            </TabsContent>
+            <TabsContent value="signin"><SignInForm onForgot={() => setTab("forgot")} /></TabsContent>
+            <TabsContent value="signup"><SignUpForm referralFromUrl={search.ref} /></TabsContent>
+            <TabsContent value="forgot"><ForgotForm onBack={() => setTab("signin")} /></TabsContent>
           </Tabs>
         </div>
       </div>
@@ -104,20 +95,16 @@ function SignInForm({ onForgot }: { onForgot: () => void }) {
       <h2 className="font-display text-2xl font-bold">Welcome back</h2>
       <div className="space-y-2">
         <Label>Email</Label>
-        <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
       </div>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label>Password</Label>
-          <button type="button" onClick={onForgot} className="text-xs text-primary hover:underline">
-            Forgot?
-          </button>
+          <button type="button" onClick={onForgot} className="text-xs text-primary hover:underline">Forgot?</button>
         </div>
-        <Input type="password" required value={pw} onChange={(e) => setPw(e.target.value)} />
+        <Input type="password" required value={pw} onChange={e => setPw(e.target.value)} />
       </div>
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Signing in..." : "Sign in"}
-      </Button>
+      <Button type="submit" className="w-full" disabled={loading}>{loading ? "Signing in..." : "Sign in"}</Button>
     </form>
   );
 }
@@ -135,8 +122,7 @@ function SignUpForm({ referralFromUrl }: { referralFromUrl?: string }) {
     if (pw.length < 8) return toast.error("Password must be at least 8 characters.");
     setLoading(true);
     const { error } = await supabase.auth.signUp({
-      email,
-      password: pw,
+      email, password: pw,
       options: {
         emailRedirectTo: `${window.location.origin}/dashboard`,
         data: { full_name: fullName, referral_code: ref || null },
@@ -151,41 +137,24 @@ function SignUpForm({ referralFromUrl }: { referralFromUrl?: string }) {
   return (
     <form onSubmit={submit} className="mt-6 space-y-4">
       <h2 className="font-display text-2xl font-bold">Create your account</h2>
-      <p className="text-sm text-muted-foreground">
-        After signup your account is <strong>Pending Activation</strong>. Use a VST code to unlock
-        the ecosystem.
-      </p>
+      <p className="text-sm text-muted-foreground">After signup your account is <strong>Pending Activation</strong>. Use a VST code to unlock the ecosystem.</p>
       <div className="space-y-2">
         <Label>Full name</Label>
-        <Input required value={fullName} onChange={(e) => setFullName(e.target.value)} />
+        <Input required value={fullName} onChange={e => setFullName(e.target.value)} />
       </div>
       <div className="space-y-2">
         <Label>Email</Label>
-        <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
       </div>
       <div className="space-y-2">
         <Label>Password</Label>
-        <Input
-          type="password"
-          required
-          minLength={8}
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
-        />
+        <Input type="password" required minLength={8} value={pw} onChange={e => setPw(e.target.value)} />
       </div>
       <div className="space-y-2">
-        <Label>
-          Referral code <span className="text-muted-foreground">(optional)</span>
-        </Label>
-        <Input
-          value={ref}
-          onChange={(e) => setRef(e.target.value.toUpperCase())}
-          placeholder="ABCD1234"
-        />
+        <Label>Referral code <span className="text-muted-foreground">(optional)</span></Label>
+        <Input value={ref} onChange={e => setRef(e.target.value.toUpperCase())} placeholder="ABCD1234" />
       </div>
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Creating..." : "Create account"}
-      </Button>
+      <Button type="submit" className="w-full" disabled={loading}>{loading ? "Creating..." : "Create account"}</Button>
     </form>
   );
 }
@@ -210,18 +179,10 @@ function ForgotForm({ onBack }: { onBack: () => void }) {
       <p className="text-sm text-muted-foreground">Enter your email — we'll send a reset link.</p>
       <div className="space-y-2">
         <Label>Email</Label>
-        <Input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+        <Input type="email" required value={email} onChange={e => setEmail(e.target.value)} />
       </div>
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? "Sending..." : "Send reset link"}
-      </Button>
-      <button
-        type="button"
-        onClick={onBack}
-        className="block w-full text-center text-xs text-muted-foreground hover:text-foreground"
-      >
-        Back to sign in
-      </button>
+      <Button type="submit" className="w-full" disabled={loading}>{loading ? "Sending..." : "Send reset link"}</Button>
+      <button type="button" onClick={onBack} className="block w-full text-center text-xs text-muted-foreground hover:text-foreground">Back to sign in</button>
     </form>
   );
 }

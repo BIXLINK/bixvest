@@ -7,21 +7,9 @@ import { adminAdjustVst, setMembershipStatus } from "@/lib/bixvest.functions";
 import { AdminLayout } from "@/components/admin-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
@@ -29,9 +17,7 @@ export const Route = createFileRoute("/_authenticated/admin/users")({
   component: UsersPage,
 });
 
-function fmt(n: number) {
-  return new Intl.NumberFormat("en-US").format(n);
-}
+function fmt(n: number) { return new Intl.NumberFormat("en-US").format(n); }
 
 function UsersPage() {
   const [q, setQ] = useState("");
@@ -45,13 +31,8 @@ function UsersPage() {
   const { data: users = [] } = useQuery({
     queryKey: ["admin-users", q],
     queryFn: async () => {
-      let query = supabase
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(200);
-      if (q)
-        query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%,referral_code.ilike.%${q}%`);
+      let query = supabase.from("profiles").select("*").order("created_at", { ascending: false }).limit(200);
+      if (q) query = query.or(`full_name.ilike.%${q}%,email.ilike.%${q}%,referral_code.ilike.%${q}%`);
       const { data } = await query;
       return data ?? [];
     },
@@ -62,9 +43,7 @@ function UsersPage() {
       await setStatus({ data: { user_id, status } });
       toast.success("Status updated");
       qc.invalidateQueries();
-    } catch (err) {
-      toast.error((err as Error).message);
-    }
+    } catch (err) { toast.error((err as Error).message); }
   }
 
   async function doAdjust() {
@@ -72,13 +51,9 @@ function UsersPage() {
     try {
       await adjust({ data: { user_id: adjustUser.id, amount: Number(amount), note } });
       toast.success("VST adjusted");
-      setAdjustUser(null);
-      setAmount("0");
-      setNote("");
+      setAdjustUser(null); setAmount("0"); setNote("");
       qc.invalidateQueries();
-    } catch (err) {
-      toast.error((err as Error).message);
-    }
+    } catch (err) { toast.error((err as Error).message); }
   }
 
   return (
@@ -86,12 +61,7 @@ function UsersPage() {
       <div className="space-y-4">
         <div className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
           <h1 className="font-display text-2xl font-bold">Users</h1>
-          <Input
-            placeholder="Search by name, email, or referral code"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            className="sm:w-80"
-          />
+          <Input placeholder="Search by name, email, or referral code" value={q} onChange={e => setQ(e.target.value)} className="sm:w-80" />
         </div>
         <div className="rounded-xl border border-border bg-card overflow-x-auto">
           <table className="w-full text-sm">
@@ -105,20 +75,15 @@ function UsersPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {users.map((u) => (
+              {users.map(u => (
                 <tr key={u.id}>
                   <td className="px-4 py-3">
                     <div className="font-medium">{u.full_name || "—"}</div>
                     <div className="text-xs text-muted-foreground">{u.email}</div>
                   </td>
                   <td className="px-4 py-3">
-                    <Select
-                      value={u.membership_status}
-                      onValueChange={(v: any) => changeStatus(u.id, v)}
-                    >
-                      <SelectTrigger className="w-32 h-8">
-                        <SelectValue />
-                      </SelectTrigger>
+                    <Select value={u.membership_status} onValueChange={(v: any) => changeStatus(u.id, v)}>
+                      <SelectTrigger className="w-32 h-8"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="pending">Pending</SelectItem>
                         <SelectItem value="active">Active</SelectItem>
@@ -126,15 +91,10 @@ function UsersPage() {
                       </SelectContent>
                     </Select>
                   </td>
-                  <td className="px-4 py-3">
-                    {fmt(Number(u.vst_balance))} /{" "}
-                    <span className="text-muted-foreground">{fmt(Number(u.vst_locked))}</span>
-                  </td>
+                  <td className="px-4 py-3">{fmt(Number(u.vst_balance))} / <span className="text-muted-foreground">{fmt(Number(u.vst_locked))}</span></td>
                   <td className="px-4 py-3">L{u.current_stake_level}</td>
                   <td className="px-4 py-3 text-right">
-                    <Button size="sm" variant="outline" onClick={() => setAdjustUser(u)}>
-                      Adjust VST
-                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => setAdjustUser(u)}>Adjust VST</Button>
                   </td>
                 </tr>
               ))}
@@ -143,25 +103,21 @@ function UsersPage() {
         </div>
       </div>
 
-      <Dialog open={!!adjustUser} onOpenChange={(o) => !o && setAdjustUser(null)}>
+      <Dialog open={!!adjustUser} onOpenChange={o => !o && setAdjustUser(null)}>
         <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Adjust VST — {adjustUser?.email}</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>Adjust VST — {adjustUser?.email}</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div className="space-y-2">
               <Label>Amount (positive to credit, negative to debit)</Label>
-              <Input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
+              <Input type="number" value={amount} onChange={e => setAmount(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label>Note</Label>
-              <Input value={note} onChange={(e) => setNote(e.target.value)} />
+              <Input value={note} onChange={e => setNote(e.target.value)} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setAdjustUser(null)}>
-              Cancel
-            </Button>
+            <Button variant="ghost" onClick={() => setAdjustUser(null)}>Cancel</Button>
             <Button onClick={doAdjust}>Apply</Button>
           </DialogFooter>
         </DialogContent>

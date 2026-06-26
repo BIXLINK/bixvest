@@ -27,11 +27,8 @@ function DailyPage() {
     queryKey: ["daily-claims", userId, today],
     enabled: !!userId,
     queryFn: async () => {
-      const { data } = await (supabase as any)
-        .from("daily_claims")
-        .select("claim_type")
-        .eq("user_id", userId)
-        .eq("claim_date", today);
+      const { data } = await (supabase as any).from("daily_claims")
+        .select("claim_type").eq("user_id", userId).eq("claim_date", today);
       return data ?? [];
     },
   });
@@ -40,10 +37,8 @@ function DailyPage() {
   const { data: cfg = [] } = useQuery({
     queryKey: ["app-config-daily"],
     queryFn: async () => {
-      const { data } = await (supabase as any)
-        .from("app_config")
-        .select("key, value")
-        .in("key", ["daily_login_reward", "daily_learning_reward", "daily_community_reward"]);
+      const { data } = await (supabase as any).from("app_config")
+        .select("key, value").in("key", ["daily_login_reward", "daily_learning_reward", "daily_community_reward"]);
       return data ?? [];
     },
   });
@@ -54,9 +49,7 @@ function DailyPage() {
       const r = await claim({ data: { type } });
       toast.success(`+${r.amount} VST claimed`);
       qc.invalidateQueries();
-    } catch (e) {
-      toast.error((e as Error).message);
-    }
+    } catch (e) { toast.error((e as Error).message); }
   }
 
   const streak = (profile as any)?.current_streak ?? 0;
@@ -67,9 +60,7 @@ function DailyPage() {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h1 className="font-display text-3xl font-bold">Today's Opportunities</h1>
-            <p className="text-sm text-muted-foreground">
-              Show up daily. Stack VST. Build your BIX Score.
-            </p>
+            <p className="text-sm text-muted-foreground">Show up daily. Stack VST. Build your BIX Score.</p>
           </div>
           <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2">
             <Flame className="h-4 w-4 text-orange-500" />
@@ -79,25 +70,19 @@ function DailyPage() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <DailyCard
-            icon={Sun}
-            title="Login Bonus"
-            desc="Show up. Get rewarded."
+            icon={Sun} title="Login Bonus" desc="Show up. Get rewarded."
             amount={amt("daily_login_reward", 50)}
             claimed={claimed.has("login")}
             onClaim={() => run("login")}
           />
           <DailyCard
-            icon={BookOpen}
-            title="Learning Task"
-            desc="Read or watch BIXVEST content."
+            icon={BookOpen} title="Learning Task" desc="Read or watch BIXVEST content."
             amount={amt("daily_learning_reward", 100)}
             claimed={claimed.has("learning")}
             onClaim={() => run("learning")}
           />
           <DailyCard
-            icon={UsersIcon}
-            title="Community Task"
-            desc="Engage with the community."
+            icon={UsersIcon} title="Community Task" desc="Engage with the community."
             amount={amt("daily_community_reward", 200)}
             claimed={claimed.has("community")}
             onClaim={() => run("community")}
@@ -105,11 +90,7 @@ function DailyPage() {
         </div>
 
         <div className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
-          Featured campaigns appear in the{" "}
-          <a href="/rewards" className="text-primary underline">
-            Rewards Hub
-          </a>
-          .
+          Featured campaigns appear in the <a href="/rewards" className="text-primary underline">Rewards Hub</a>.
         </div>
       </div>
     </AppLayout>
@@ -127,13 +108,9 @@ function DailyCard({ icon: Icon, title, desc, amount, claimed, onClaim }: any) {
       <div className="mt-4 flex items-center justify-between">
         <div className="text-sm font-medium text-primary">+{amount} VST</div>
         {claimed ? (
-          <Button size="sm" variant="secondary" disabled>
-            <Check className="mr-1 h-3 w-3" /> Claimed
-          </Button>
+          <Button size="sm" variant="secondary" disabled><Check className="mr-1 h-3 w-3" /> Claimed</Button>
         ) : (
-          <Button size="sm" onClick={onClaim}>
-            Claim
-          </Button>
+          <Button size="sm" onClick={onClaim}>Claim</Button>
         )}
       </div>
     </div>

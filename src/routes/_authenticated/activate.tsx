@@ -16,11 +16,8 @@ export const Route = createFileRoute("/_authenticated/activate")({
   beforeLoad: async () => {
     const { data } = await supabase.auth.getUser();
     if (!data.user) return;
-    const { data: roles } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", data.user.id);
-    const isAdmin = (roles ?? []).some((r) => r.role === "super_admin" || r.role === "admin");
+    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
+    const isAdmin = (roles ?? []).some(r => r.role === "super_admin" || r.role === "admin");
     if (isAdmin) throw redirect({ to: "/dashboard" });
   },
   component: ActivatePage,
@@ -61,9 +58,7 @@ function ActivatePage() {
         </div>
         <div>
           <h1 className="font-display text-3xl font-bold">Activate your membership</h1>
-          <p className="mt-2 text-white/70 text-sm">
-            Enter the VST activation code provided by your administrator to unlock the ecosystem.
-          </p>
+          <p className="mt-2 text-white/70 text-sm">Enter the VST activation code provided by your administrator to unlock the ecosystem.</p>
         </div>
         <form onSubmit={submit} className="space-y-4">
           <div className="space-y-2">
@@ -73,17 +68,13 @@ function ActivatePage() {
               <Input
                 required
                 value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
+                onChange={e => setCode(e.target.value.toUpperCase())}
                 placeholder="VST-XXXX-XXXX"
                 className="pl-9 font-mono tracking-wider bg-white/10 border-white/20 text-white placeholder:text-white/40"
               />
             </div>
           </div>
-          <Button
-            type="submit"
-            className="w-full bg-gradient-emerald shadow-glow"
-            disabled={loading}
-          >
+          <Button type="submit" className="w-full bg-gradient-emerald shadow-glow" disabled={loading}>
             {loading ? "Activating..." : "Activate membership"}
           </Button>
         </form>

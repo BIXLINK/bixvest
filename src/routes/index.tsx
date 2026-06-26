@@ -6,16 +6,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "BIXVEST — Digital Participation & Growth Ecosystem" },
-      {
-        name: "description",
-        content:
-          "Earn VST, stake into levels, build your digital activity profile. Powered by Bixvest Holdings.",
-      },
+      { name: "description", content: "Earn VST, stake into levels, build your digital activity profile. Powered by Bixvest Holdings." },
       { property: "og:title", content: "BIXVEST — Digital Participation & Growth Ecosystem" },
-      {
-        property: "og:description",
-        content: "Earn VST, stake into levels, build your digital activity profile.",
-      },
+      { property: "og:description", content: "Earn VST, stake into levels, build your digital activity profile." },
     ],
   }),
   component: Landing,
@@ -31,12 +24,8 @@ function Landing() {
             <div className="font-display text-lg font-bold tracking-tight">BIXVEST</div>
           </Link>
           <div className="flex items-center gap-2">
-            <Link to="/auth" className="hidden sm:inline-flex">
-              <Button variant="ghost">Sign in</Button>
-            </Link>
-            <Link to="/auth">
-              <Button>Get started</Button>
-            </Link>
+            <Link to="/auth" className="hidden sm:inline-flex"><Button variant="ghost">Sign in</Button></Link>
+            <Link to="/auth"><Button>Get started</Button></Link>
           </div>
         </div>
       </header>
@@ -52,35 +41,20 @@ function Landing() {
               The VST-powered digital growth ecosystem.
             </h1>
             <p className="mt-5 max-w-2xl text-base text-white/70 sm:text-lg">
-              Participate in community campaigns, earn VST points, stake into 10 progressive levels,
-              and build a digital activity profile that grows with you.
+              Participate in community campaigns, earn VST points, stake into 10 progressive levels, and build a digital activity profile that grows with you.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/auth">
-                <Button size="lg" className="bg-gradient-emerald shadow-glow">
-                  Create your account <ArrowRight className="ml-1 h-4 w-4" />
-                </Button>
-              </Link>
-              <Link to="/auth">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-white/20 bg-white/5 text-white hover:bg-white/10"
-                >
-                  Activate membership
-                </Button>
-              </Link>
+              <Link to="/auth"><Button size="lg" className="bg-gradient-emerald shadow-glow">Create your account <ArrowRight className="ml-1 h-4 w-4" /></Button></Link>
+              <Link to="/auth"><Button size="lg" variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10">Activate membership</Button></Link>
             </div>
             <div className="mt-12 grid max-w-2xl grid-cols-3 gap-6 text-left">
               {[
                 { k: "10", v: "Staking levels" },
                 { k: "50M", v: "Max VST tier" },
                 { k: "∞", v: "Earning potential" },
-              ].map((s) => (
+              ].map(s => (
                 <div key={s.v}>
-                  <div className="font-display text-2xl font-bold text-white sm:text-3xl">
-                    {s.k}
-                  </div>
+                  <div className="font-display text-2xl font-bold text-white sm:text-3xl">{s.k}</div>
                   <div className="text-xs uppercase tracking-wider text-white/60">{s.v}</div>
                 </div>
               ))}
@@ -93,51 +67,19 @@ function Landing() {
       <section className="mx-auto max-w-7xl px-4 py-20 lg:px-8">
         <div className="max-w-2xl">
           <div className="text-xs uppercase tracking-wider text-primary">Core modules</div>
-          <h2 className="mt-2 font-display text-3xl font-bold sm:text-4xl">
-            A complete participation stack.
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Five core modules built to grow with you — from your first VST earned to a fully staked
-            digital profile.
-          </p>
+          <h2 className="mt-2 font-display text-3xl font-bold sm:text-4xl">A complete participation stack.</h2>
+          <p className="mt-3 text-muted-foreground">Five core modules built to grow with you — from your first VST earned to a fully staked digital profile.</p>
         </div>
         <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {[
-            {
-              icon: Sparkles,
-              t: "VST Rewards Hub",
-              d: "Engagement tasks, brand campaigns, limited-time challenges.",
-            },
-            {
-              icon: Vault,
-              t: "VST Vault",
-              d: "Stake into 10 progressive levels — 50K to 50M VST.",
-            },
-            {
-              icon: Trophy,
-              t: "Wallet & History",
-              d: "Track every VST earned, spent, and locked.",
-            },
-            {
-              icon: Users,
-              t: "Referral Network",
-              d: "Grow your network with a unique VST referral ID.",
-            },
-            {
-              icon: Layers,
-              t: "Activity Profile",
-              d: "Your full participation history, in one place.",
-            },
-            {
-              icon: Shield,
-              t: "Secure by design",
-              d: "Bank-grade authentication, role-protected admin.",
-            },
-          ].map((m) => (
-            <div
-              key={m.t}
-              className="rounded-xl border border-border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-elegant"
-            >
+            { icon: Sparkles, t: "VST Rewards Hub", d: "Engagement tasks, brand campaigns, limited-time challenges." },
+            { icon: Vault, t: "VST Vault", d: "Stake into 10 progressive levels — 50K to 50M VST." },
+            { icon: Trophy, t: "Wallet & History", d: "Track every VST earned, spent, and locked." },
+            { icon: Users, t: "Referral Network", d: "Grow your network with a unique VST referral ID." },
+            { icon: Layers, t: "Activity Profile", d: "Your full participation history, in one place." },
+            { icon: Shield, t: "Secure by design", d: "Bank-grade authentication, role-protected admin." },
+          ].map(m => (
+            <div key={m.t} className="rounded-xl border border-border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-elegant">
               <div className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
                 <m.icon className="h-5 w-5 text-primary" />
               </div>
@@ -152,18 +94,9 @@ function Landing() {
       <section className="mx-auto max-w-7xl px-4 pb-20 lg:px-8">
         <div className="overflow-hidden rounded-2xl bg-hero p-10 text-white shadow-elegant lg:p-16">
           <div className="max-w-2xl">
-            <h2 className="font-display text-3xl font-bold sm:text-4xl">
-              Ready to start earning VST?
-            </h2>
-            <p className="mt-3 text-white/70">
-              Create your account in seconds. Activate with your VST code to unlock the full
-              ecosystem.
-            </p>
-            <Link to="/auth" className="mt-6 inline-flex">
-              <Button size="lg" className="bg-gradient-gold text-gold-foreground">
-                Get started <ArrowRight className="ml-1 h-4 w-4" />
-              </Button>
-            </Link>
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">Ready to start earning VST?</h2>
+            <p className="mt-3 text-white/70">Create your account in seconds. Activate with your VST code to unlock the full ecosystem.</p>
+            <Link to="/auth" className="mt-6 inline-flex"><Button size="lg" className="bg-gradient-gold text-gold-foreground">Get started <ArrowRight className="ml-1 h-4 w-4" /></Button></Link>
           </div>
         </div>
       </section>
