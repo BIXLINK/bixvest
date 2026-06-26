@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import type { Session, User } from "@supabase/supabase-js";
+import type { Session, User, AuthChangeEvent } from "@supabase/supabase-js";
 
 export function useSession() {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, s: Session | null) => {
       setSession(s);
       setLoading(false);
     });
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
       setSession(data.session);
       setLoading(false);
     });
@@ -51,7 +51,7 @@ export function useIsAdmin() {
         .select("role")
         .eq("user_id", session!.user.id);
       if (error) throw error;
-      return (data ?? []).some((r) => r.role === "super_admin" || r.role === "admin");
+      return (data ?? []).some((r: any) => r.role === "super_admin" || r.role === "admin");
     },
   });
 }
