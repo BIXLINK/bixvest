@@ -372,6 +372,17 @@ export const completeMission = createServerFn({ method: "POST" })
     if (data.mission_id === "verify_email") {
       const { data: u } = await supabaseAdmin.auth.admin.getUserById(userId);
       if (!u.user?.email_confirmed_at) throw new Error("Email not yet verified.");
+    } else if (data.mission_id === "first_campaign") {
+      const { count } = await supabaseAdmin
+        .from("campaign_participations")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .in("status", ["pending", "approved"]);
+      if (!count || count < 1) throw new Error("Join a campaign first to complete this mission.");
+    } else if (data.mission_id === "explore_dashboard" || data.mission_id === "complete_profile") {
+      // already handled / honour-based for explore_dashboard
+    } else {
+      throw new Error("Unknown mission.");
     }
 
     const reward = Number(m.onboarding_missions?.reward ?? 0);
