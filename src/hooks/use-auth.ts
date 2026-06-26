@@ -19,7 +19,7 @@ export function useSession() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  return { session, user: session?.user ?? null as User | null, loading };
+  return { session, user: session?.user ?? (null as User | null), loading };
 }
 
 export function useProfile() {
@@ -51,7 +51,7 @@ export function useIsAdmin() {
         .select("role")
         .eq("user_id", session!.user.id);
       if (error) throw error;
-      return (data ?? []).some(r => r.role === "super_admin" || r.role === "admin");
+      return (data ?? []).some((r) => r.role === "super_admin" || r.role === "admin");
     },
   });
 }

@@ -20,11 +20,16 @@ function ProfilePage() {
   const [fullName, setFullName] = useState("");
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => { if (profile?.full_name) setFullName(profile.full_name); }, [profile?.full_name]);
+  useEffect(() => {
+    if (profile?.full_name) setFullName(profile.full_name);
+  }, [profile?.full_name]);
 
   async function save() {
     setSaving(true);
-    const { error } = await supabase.from("profiles").update({ full_name: fullName }).eq("id", profile!.id);
+    const { error } = await supabase
+      .from("profiles")
+      .update({ full_name: fullName })
+      .eq("id", profile!.id);
     setSaving(false);
     if (error) return toast.error(error.message);
     toast.success("Profile updated.");
@@ -42,7 +47,7 @@ function ProfilePage() {
         <div className="rounded-xl border border-border bg-card p-6 space-y-4">
           <div className="space-y-2">
             <Label>Full name</Label>
-            <Input value={fullName} onChange={e => setFullName(e.target.value)} />
+            <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label>Email</Label>
@@ -52,9 +57,14 @@ function ProfilePage() {
             <Info label="Membership" value={profile?.membership_status?.toUpperCase() ?? "—"} />
             <Info label="Stake Level" value={`L${profile?.current_stake_level ?? 0}`} />
             <Info label="Referral ID" value={profile?.referral_code ?? "—"} mono />
-            <Info label="Joined" value={profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : "—"} />
+            <Info
+              label="Joined"
+              value={profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : "—"}
+            />
           </div>
-          <Button onClick={save} disabled={saving}>{saving ? "Saving..." : "Save changes"}</Button>
+          <Button onClick={save} disabled={saving}>
+            {saving ? "Saving..." : "Save changes"}
+          </Button>
         </div>
       </div>
     </AppLayout>
