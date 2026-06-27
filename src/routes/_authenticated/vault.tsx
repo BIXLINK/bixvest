@@ -20,12 +20,12 @@ export const Route = createFileRoute("/_authenticated/vault")({
 function fmt(n: number) { return new Intl.NumberFormat("en-US").format(n); }
 
 function VaultPage() {
-  const { data: profile } = useProfile();
+  const { data: profile, isLoading: profileLoading } = useProfile();
   const qc = useQueryClient();
   const stake = useServerFn(stakeVst);
   const [busy, setBusy] = useState<number | null>(null);
 
-  const { data: levels = [] } = useQuery({
+  const { data: levels = [], isLoading: levelsLoading } = useQuery({
     queryKey: ["stake-levels"],
     queryFn: async () => (await supabase.from("stake_levels").select("*").order("level")).data ?? [],
   });
@@ -35,18 +35,35 @@ function VaultPage() {
     queryFn: async () => (await supabase.from("stakes").select("*").eq("user_id", profile!.id).order("created_at", { ascending: false })).data ?? [],
   });
 
+  const currentLevel = profile?.current_stake_level ?? 0;
+  const nextLevel = levels.find((lvl) => lvl.level === currentLevel + 1);
+  const nextAmount = nextLevel
+    ? Math.max(0, Number(nextLevel.vst_required) - Number(profile?.vst_locked ?? 0))
+    : 0;
+  const canStakeNext = !!nextLevel && Number(profile?.vst_balance ?? 0) >= nextAmount;
+
+  if (profileLoading || levelsLoading) {
+    return (
+      <AppLayout>
+        <div className="mx-auto max-w-7xl py-20 text-center text-sm text-muted-foreground">
+          Loading vault...
+        </div>
+      </AppLayout>
+    );
+  }
+
   async function doStake(level: number) {
     setBusy(level);
     try {
       await stake({ data: { level } });
       toast.success(`Staked into Tier ${level}`);
-      qc.invalidateQueries();
+      qc.invalidateQueries({ queryKey: ["profile", profile?.id] });
+      qc.invalidateQueries({ queryKey: ["stakes", profile?.id] });
+      qc.invalidateQueries({ queryKey: ["stake-levels"] });
     } catch (err) {
       toast.error((err as Error).message);
     } finally { setBusy(null); }
   }
-
-  const currentLevel = profile?.current_stake_level ?? 0;
 
   return (
     <AppLayout>
@@ -61,6 +78,27 @@ function VaultPage() {
           <Stat label="Locked VST" value={fmt(Number(profile?.vst_locked ?? 0))} hero />
           <Stat label="Current level" value={`L${currentLevel}`} />
         </div>
+
+        {nextLevel ? (
+          <div className="rounded-xl border border-border bg-card px-6 py-4 text-sm text-muted-foreground">
+            <div className="font-medium">Next unlock</div>
+            <div className="mt-1 text-sm">
+              Tier {nextLevel.level} — {nextLevel.name}
+            </div>
+            <div className="mt-1 text-sm">
+              Requires {fmt(Number(nextLevel.vst_required))} VST, need {fmt(nextAmount)} more.
+            </div>
+            {!canStakeNext && (
+              <div className="mt-2 text-xs text-amber-500">
+                Insufficient available VST for the next level.
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="rounded-xl border border-border bg-card px-6 py-4 text-sm text-muted-foreground">
+            You have unlocked all available vault tiers.
+          </div>
+        )}
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {levels.map(lvl => {
@@ -79,7 +117,12 @@ function VaultPage() {
                   {achieved ? (
                     <div className="text-xs text-white/70 flex items-center gap-1"><Lock className="h-3 w-3" /> Staked</div>
                   ) : (
-                    <Button size="sm" className="w-full" disabled={!next || busy === lvl.level} onClick={() => doStake(lvl.level)}>
+                    <Button
+                      size="sm"
+                      className="w-full"
+                      disabled={!next || busy === lvl.level || (next && !canStakeNext)}
+                      onClick={() => doStake(lvl.level)}
+                    >
                       {busy === lvl.level ? "Staking..." : next ? "Stake" : "Locked"}
                     </Button>
                   )}
