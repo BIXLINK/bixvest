@@ -51,4 +51,4 @@ npm run format
 
 Contact
 
-For questions or support, contact hello@bixvest.example.
+For questions or support, contact bixvest@protonmail.com.

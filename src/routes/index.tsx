@@ -196,7 +196,7 @@ function Landing() {
             <Link to="/about" className="hover:underline">
               About
             </Link>
-            <a href="mailto:hello@bixvest.example" className="hover:underline">
+            <a href="mailto:bixvest@protonmail.com" className="hover:underline">
               Contact
             </a>
           </div>

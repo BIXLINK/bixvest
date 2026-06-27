@@ -92,9 +92,9 @@ export default function AboutPage() {
           <div className="rounded-xl border border-border bg-card p-6">
             <div className="font-medium">Contact</div>
             <div className="mt-3 text-sm text-muted-foreground">
-              For partnerships, support, or developer inquiries, email{" "}
-              <a href="mailto:hello@bixvest.example" className="text-primary hover:underline">
-                hello@bixvest.example
+              For partnerships, support, or developer inquiries, email {" "}
+              <a href="mailto:bixvest@protonmail.com" className="text-primary hover:underline">
+                bixvest@protonmail.com
               </a>
               .
             </div>

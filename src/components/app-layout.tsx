@@ -122,7 +122,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
                 BIX
               </div>
               <div className="font-display text-base font-semibold">
-                {Number((profile as any)?.bix_score ?? 0)}
+                {profile?.bix_score ?? 0}
               </div>
             </div>
           </div>

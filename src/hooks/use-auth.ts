@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Session, User } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 
 export function useSession() {
   const [session, setSession] = useState<Session | null>(null);
@@ -24,7 +25,7 @@ export function useSession() {
 
 export function useProfile() {
   const { session, loading } = useSession();
-  const query = useQuery({
+  const query = useQuery<Database["public"]["Tables"]["profiles"]["Row"] | null>({
     queryKey: ["profile", session?.user.id],
     enabled: !!session?.user,
     queryFn: async () => {
