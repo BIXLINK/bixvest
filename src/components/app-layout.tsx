@@ -2,12 +2,14 @@ import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { type ReactNode, useState } from "react";
 import {
   LayoutDashboard, Sparkles, Vault, Wallet, Users, User as UserIcon,
-  LogOut, Shield, Menu, X, Bell, Sun, TrendingUp,
+  LogOut, Shield, Menu, X, Bell, Sun, Moon, TrendingUp,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useIsAdmin } from "@/hooks/use-auth";
+import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -38,6 +40,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = useRouterState({ select: s => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const { theme, toggle } = useTheme();
+
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -137,11 +141,15 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <div className="h-2 w-2 rounded-full bg-primary" />
               <span className="text-xs font-medium">{formatVst(Number(profile?.vst_balance ?? 0))} VST</span>
             </div>
+            <Button variant="ghost" size="icon" onClick={toggle} aria-label="Toggle theme">
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
             <Button variant="ghost" size="icon"><Bell className="h-4 w-4" /></Button>
           </div>
         </header>
 
-        <main className="flex-1 px-4 py-6 pb-24 lg:px-8 lg:pb-8">{children}</main>
+        <main key={pathname} className="flex-1 px-4 py-6 pb-24 lg:px-8 lg:pb-8 page-enter">{children}</main>
+
 
         <nav className="fixed bottom-0 left-0 right-0 z-40 grid grid-cols-5 border-t border-border bg-background/95 backdrop-blur lg:hidden">
           {mobileNav.map(item => {
