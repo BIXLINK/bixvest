@@ -67,14 +67,12 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             })}
           </div>
         </div>
-        <main className="flex-1 px-4 py-6 lg:px-8">{children}</main>
-      </div>
-    </div>
         <main key={pathname} className="flex-1 px-4 py-6 lg:px-8 page-enter">{children}</main>
       </div>
     </div>
   );
 }
+
 
 function ThemeToggle() {
   const { theme, toggle } = useTheme();
