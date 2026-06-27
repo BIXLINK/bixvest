@@ -1,7 +1,10 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { type ReactNode } from "react";
-import { ArrowLeft, BarChart3, Users, Ticket, Megaphone, ListChecks, Layers, BookOpen, Settings, FileClock, TrendingUp, Coins } from "lucide-react";
+import { ArrowLeft, BarChart3, Users, Ticket, Megaphone, ListChecks, Layers, BookOpen, Settings, FileClock, TrendingUp, Coins, Sun, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/hooks/use-theme";
+import { Button } from "@/components/ui/button";
+
 
 const items = [
   { to: "/admin/overview", label: "Overview", icon: BarChart3 },
@@ -44,10 +47,14 @@ export function AdminLayout({ children }: { children: ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur lg:px-8">
           <div className="font-display font-semibold">BIXVEST Command Center</div>
-          <Link to="/dashboard" className="text-xs text-muted-foreground hover:text-foreground">Exit</Link>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Link to="/dashboard" className="text-xs text-muted-foreground hover:text-foreground">Exit</Link>
+          </div>
         </header>
         <div className="lg:hidden border-b border-border bg-card overflow-x-auto">
           <div className="flex gap-1 px-2 py-2">
+
             {items.map(item => {
               const active = pathname === item.to;
               return (
@@ -60,8 +67,19 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             })}
           </div>
         </div>
-        <main className="flex-1 px-4 py-6 lg:px-8">{children}</main>
+        <main key={pathname} className="flex-1 px-4 py-6 lg:px-8 page-enter">{children}</main>
       </div>
     </div>
   );
 }
+
+
+function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  return (
+    <Button variant="ghost" size="icon" onClick={toggle} aria-label="Toggle theme">
+      {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+    </Button>
+  );
+}
+
