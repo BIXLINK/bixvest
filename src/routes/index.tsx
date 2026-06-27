@@ -108,6 +108,9 @@ function Landing() {
           </div>
         </div>
       </section>
+      </main>
+
+
 
       <footer className="border-t border-border py-8 text-center text-xs text-muted-foreground">
         © {new Date().getFullYear()} Bixvest Holdings. All rights reserved.
