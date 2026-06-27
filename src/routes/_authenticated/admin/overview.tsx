@@ -10,7 +10,9 @@ export const Route = createFileRoute("/_authenticated/admin/overview")({
   component: Overview,
 });
 
-function fmt(n: number) { return new Intl.NumberFormat("en-US").format(n); }
+function fmt(n: number) {
+  return new Intl.NumberFormat("en-US").format(n);
+}
 
 function Overview() {
   const fn = useServerFn(getAdminAnalytics);
@@ -36,7 +38,11 @@ function Overview() {
             <Card label="Active tasks" value={fmt(data?.activeTasks ?? 0)} icon={ListChecks} />
             <Card label="Campaigns" value={fmt(data?.campaigns ?? 0)} icon={Megaphone} />
             <Card label="Pending reviews" value={fmt(data?.pendingSubmissions ?? 0)} icon={Clock} />
-            <Card label="Codes (unused / used)" value={`${fmt(data?.codesUnused ?? 0)} / ${fmt(data?.codesUsed ?? 0)}`} icon={Ticket} />
+            <Card
+              label="Codes (unused / used)"
+              value={`${fmt(data?.codesUnused ?? 0)} / ${fmt(data?.codesUsed ?? 0)}`}
+              icon={Ticket}
+            />
           </div>
         )}
       </div>

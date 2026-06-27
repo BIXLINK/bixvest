@@ -16,18 +16,26 @@ function apply(theme: Theme) {
 }
 
 export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(() => (typeof window === "undefined" ? "dark" : getInitial()));
+  const [theme, setTheme] = useState<Theme>(() =>
+    typeof window === "undefined" ? "dark" : getInitial(),
+  );
 
   useEffect(() => {
     apply(theme);
     localStorage.setItem("bixvest-theme", theme);
   }, [theme]);
 
-  const toggle = useCallback(() => setTheme(t => (t === "dark" ? "light" : "dark")), []);
+  const toggle = useCallback(() => setTheme((t) => (t === "dark" ? "light" : "dark")), []);
   return { theme, setTheme, toggle };
 }
 
 // Run once on module import to avoid FOUC
 if (typeof window !== "undefined") {
-  try { apply(getInitial()); } catch {}
+  try {
+    apply(getInitial());
+  } catch (err) {
+    // Non-fatal: applying theme failed (e.g., DOM access denied in some environments)
+    // Log debug for troubleshooting without breaking user experience.
+    console.debug("apply theme failed", err);
+  }
 }

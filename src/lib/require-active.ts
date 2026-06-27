@@ -13,9 +13,7 @@ export async function requireActiveOrAdmin() {
     .from("user_roles")
     .select("role")
     .eq("user_id", data.user.id);
-  const isAdmin = (roles ?? []).some(
-    (r) => r.role === "super_admin" || r.role === "admin",
-  );
+  const isAdmin = (roles ?? []).some((r) => r.role === "super_admin" || r.role === "admin");
   if (isAdmin) return;
 
   const { data: prof } = await supabase

@@ -1,947 +1,941 @@
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
+    PostgrestVersion: "14.5";
+  };
   public: {
     Tables: {
       activation_codes: {
         Row: {
-          amount: number | null
-          assigned_email: string | null
-          code: string
-          created_at: string
-          created_by: string | null
-          currency: string | null
-          email: string | null
-          expires_at: string | null
-          gateway: string | null
-          generated_by: string
-          id: string
-          payment_id: string | null
-          status: Database["public"]["Enums"]["code_status"]
-          used_at: string | null
-          used_by: string | null
-        }
+          amount: number | null;
+          assigned_email: string | null;
+          code: string;
+          created_at: string;
+          created_by: string | null;
+          currency: string | null;
+          email: string | null;
+          expires_at: string | null;
+          gateway: string | null;
+          generated_by: string;
+          id: string;
+          payment_id: string | null;
+          status: Database["public"]["Enums"]["code_status"];
+          used_at: string | null;
+          used_by: string | null;
+        };
         Insert: {
-          amount?: number | null
-          assigned_email?: string | null
-          code: string
-          created_at?: string
-          created_by?: string | null
-          currency?: string | null
-          email?: string | null
-          expires_at?: string | null
-          gateway?: string | null
-          generated_by?: string
-          id?: string
-          payment_id?: string | null
-          status?: Database["public"]["Enums"]["code_status"]
-          used_at?: string | null
-          used_by?: string | null
-        }
+          amount?: number | null;
+          assigned_email?: string | null;
+          code: string;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string | null;
+          email?: string | null;
+          expires_at?: string | null;
+          gateway?: string | null;
+          generated_by?: string;
+          id?: string;
+          payment_id?: string | null;
+          status?: Database["public"]["Enums"]["code_status"];
+          used_at?: string | null;
+          used_by?: string | null;
+        };
         Update: {
-          amount?: number | null
-          assigned_email?: string | null
-          code?: string
-          created_at?: string
-          created_by?: string | null
-          currency?: string | null
-          email?: string | null
-          expires_at?: string | null
-          gateway?: string | null
-          generated_by?: string
-          id?: string
-          payment_id?: string | null
-          status?: Database["public"]["Enums"]["code_status"]
-          used_at?: string | null
-          used_by?: string | null
-        }
+          amount?: number | null;
+          assigned_email?: string | null;
+          code?: string;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string | null;
+          email?: string | null;
+          expires_at?: string | null;
+          gateway?: string | null;
+          generated_by?: string;
+          id?: string;
+          payment_id?: string | null;
+          status?: Database["public"]["Enums"]["code_status"];
+          used_at?: string | null;
+          used_by?: string | null;
+        };
         Relationships: [
           {
-            foreignKeyName: "activation_codes_payment_id_fkey"
-            columns: ["payment_id"]
-            isOneToOne: false
-            referencedRelation: "payments"
-            referencedColumns: ["id"]
+            foreignKeyName: "activation_codes_payment_id_fkey";
+            columns: ["payment_id"];
+            isOneToOne: false;
+            referencedRelation: "payments";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       app_config: {
         Row: {
-          key: string
-          updated_at: string
-          updated_by: string | null
-          value: Json
-        }
+          key: string;
+          updated_at: string;
+          updated_by: string | null;
+          value: Json;
+        };
         Insert: {
-          key: string
-          updated_at?: string
-          updated_by?: string | null
-          value: Json
-        }
+          key: string;
+          updated_at?: string;
+          updated_by?: string | null;
+          value: Json;
+        };
         Update: {
-          key?: string
-          updated_at?: string
-          updated_by?: string | null
-          value?: Json
-        }
-        Relationships: []
-      }
+          key?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+          value?: Json;
+        };
+        Relationships: [];
+      };
       audit_log: {
         Row: {
-          action: string
-          actor_id: string | null
-          created_at: string
-          id: string
-          payload: Json
-          target_id: string | null
-          target_type: string | null
-        }
+          action: string;
+          actor_id: string | null;
+          created_at: string;
+          id: string;
+          payload: Json;
+          target_id: string | null;
+          target_type: string | null;
+        };
         Insert: {
-          action: string
-          actor_id?: string | null
-          created_at?: string
-          id?: string
-          payload?: Json
-          target_id?: string | null
-          target_type?: string | null
-        }
+          action: string;
+          actor_id?: string | null;
+          created_at?: string;
+          id?: string;
+          payload?: Json;
+          target_id?: string | null;
+          target_type?: string | null;
+        };
         Update: {
-          action?: string
-          actor_id?: string | null
-          created_at?: string
-          id?: string
-          payload?: Json
-          target_id?: string | null
-          target_type?: string | null
-        }
-        Relationships: []
-      }
+          action?: string;
+          actor_id?: string | null;
+          created_at?: string;
+          id?: string;
+          payload?: Json;
+          target_id?: string | null;
+          target_type?: string | null;
+        };
+        Relationships: [];
+      };
       campaign_participations: {
         Row: {
-          campaign_id: string
-          created_at: string
-          id: string
-          proof: string | null
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: string
-          user_id: string
-          vst_awarded: number
-        }
+          campaign_id: string;
+          created_at: string;
+          id: string;
+          proof: string | null;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          status: string;
+          user_id: string;
+          vst_awarded: number;
+        };
         Insert: {
-          campaign_id: string
-          created_at?: string
-          id?: string
-          proof?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          user_id: string
-          vst_awarded?: number
-        }
+          campaign_id: string;
+          created_at?: string;
+          id?: string;
+          proof?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: string;
+          user_id: string;
+          vst_awarded?: number;
+        };
         Update: {
-          campaign_id?: string
-          created_at?: string
-          id?: string
-          proof?: string | null
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: string
-          user_id?: string
-          vst_awarded?: number
-        }
+          campaign_id?: string;
+          created_at?: string;
+          id?: string;
+          proof?: string | null;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: string;
+          user_id?: string;
+          vst_awarded?: number;
+        };
         Relationships: [
           {
-            foreignKeyName: "campaign_participations_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            foreignKeyName: "campaign_participations_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       campaigns: {
         Row: {
-          budget: number
-          created_at: string
-          created_by: string | null
-          description: string
-          end_at: string | null
-          ends_at: string | null
-          id: string
-          min_bix_score: number
-          spent: number
-          start_at: string | null
-          starts_at: string | null
-          status: Database["public"]["Enums"]["task_status"]
-          target_audience: Json
-          title: string
-          vst_reward: number
-        }
+          budget: number;
+          created_at: string;
+          created_by: string | null;
+          description: string;
+          end_at: string | null;
+          ends_at: string | null;
+          id: string;
+          min_bix_score: number;
+          spent: number;
+          start_at: string | null;
+          starts_at: string | null;
+          status: Database["public"]["Enums"]["task_status"];
+          target_audience: Json;
+          title: string;
+          vst_reward: number;
+        };
         Insert: {
-          budget?: number
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          end_at?: string | null
-          ends_at?: string | null
-          id?: string
-          min_bix_score?: number
-          spent?: number
-          start_at?: string | null
-          starts_at?: string | null
-          status?: Database["public"]["Enums"]["task_status"]
-          target_audience?: Json
-          title: string
-          vst_reward?: number
-        }
+          budget?: number;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string;
+          end_at?: string | null;
+          ends_at?: string | null;
+          id?: string;
+          min_bix_score?: number;
+          spent?: number;
+          start_at?: string | null;
+          starts_at?: string | null;
+          status?: Database["public"]["Enums"]["task_status"];
+          target_audience?: Json;
+          title: string;
+          vst_reward?: number;
+        };
         Update: {
-          budget?: number
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          end_at?: string | null
-          ends_at?: string | null
-          id?: string
-          min_bix_score?: number
-          spent?: number
-          start_at?: string | null
-          starts_at?: string | null
-          status?: Database["public"]["Enums"]["task_status"]
-          target_audience?: Json
-          title?: string
-          vst_reward?: number
-        }
-        Relationships: []
-      }
+          budget?: number;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string;
+          end_at?: string | null;
+          ends_at?: string | null;
+          id?: string;
+          min_bix_score?: number;
+          spent?: number;
+          start_at?: string | null;
+          starts_at?: string | null;
+          status?: Database["public"]["Enums"]["task_status"];
+          target_audience?: Json;
+          title?: string;
+          vst_reward?: number;
+        };
+        Relationships: [];
+      };
       daily_claims: {
         Row: {
-          amount: number
-          claim_date: string
-          claim_type: string
-          created_at: string
-          id: string
-          user_id: string
-        }
+          amount: number;
+          claim_date: string;
+          claim_type: string;
+          created_at: string;
+          id: string;
+          user_id: string;
+        };
         Insert: {
-          amount?: number
-          claim_date?: string
-          claim_type: string
-          created_at?: string
-          id?: string
-          user_id: string
-        }
+          amount?: number;
+          claim_date?: string;
+          claim_type: string;
+          created_at?: string;
+          id?: string;
+          user_id: string;
+        };
         Update: {
-          amount?: number
-          claim_date?: string
-          claim_type?: string
-          created_at?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+          amount?: number;
+          claim_date?: string;
+          claim_type?: string;
+          created_at?: string;
+          id?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       invest_holdings: {
         Row: {
-          amount: number
-          ended_at: string | null
-          id: string
-          product_id: string
-          started_at: string
-          status: string
-          user_id: string
-        }
+          amount: number;
+          ended_at: string | null;
+          id: string;
+          product_id: string;
+          started_at: string;
+          status: string;
+          user_id: string;
+        };
         Insert: {
-          amount: number
-          ended_at?: string | null
-          id?: string
-          product_id: string
-          started_at?: string
-          status?: string
-          user_id: string
-        }
+          amount: number;
+          ended_at?: string | null;
+          id?: string;
+          product_id: string;
+          started_at?: string;
+          status?: string;
+          user_id: string;
+        };
         Update: {
-          amount?: number
-          ended_at?: string | null
-          id?: string
-          product_id?: string
-          started_at?: string
-          status?: string
-          user_id?: string
-        }
+          amount?: number;
+          ended_at?: string | null;
+          id?: string;
+          product_id?: string;
+          started_at?: string;
+          status?: string;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "invest_holdings_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "invest_products"
-            referencedColumns: ["id"]
+            foreignKeyName: "invest_holdings_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "invest_products";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       invest_products: {
         Row: {
-          apr: number
-          created_at: string
-          description: string
-          id: string
-          min_amount: number
-          name: string
-          status: string
-          updated_at: string
-        }
+          apr: number;
+          created_at: string;
+          description: string;
+          id: string;
+          min_amount: number;
+          name: string;
+          status: string;
+          updated_at: string;
+        };
         Insert: {
-          apr?: number
-          created_at?: string
-          description?: string
-          id?: string
-          min_amount?: number
-          name: string
-          status?: string
-          updated_at?: string
-        }
+          apr?: number;
+          created_at?: string;
+          description?: string;
+          id?: string;
+          min_amount?: number;
+          name: string;
+          status?: string;
+          updated_at?: string;
+        };
         Update: {
-          apr?: number
-          created_at?: string
-          description?: string
-          id?: string
-          min_amount?: number
-          name?: string
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
+          apr?: number;
+          created_at?: string;
+          description?: string;
+          id?: string;
+          min_amount?: number;
+          name?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       invest_transactions: {
         Row: {
-          amount: number
-          balance_after: number
-          created_at: string
-          id: string
-          note: string | null
-          reference_id: string | null
-          type: string
-          user_id: string
-        }
+          amount: number;
+          balance_after: number;
+          created_at: string;
+          id: string;
+          note: string | null;
+          reference_id: string | null;
+          type: string;
+          user_id: string;
+        };
         Insert: {
-          amount: number
-          balance_after?: number
-          created_at?: string
-          id?: string
-          note?: string | null
-          reference_id?: string | null
-          type: string
-          user_id: string
-        }
+          amount: number;
+          balance_after?: number;
+          created_at?: string;
+          id?: string;
+          note?: string | null;
+          reference_id?: string | null;
+          type: string;
+          user_id: string;
+        };
         Update: {
-          amount?: number
-          balance_after?: number
-          created_at?: string
-          id?: string
-          note?: string | null
-          reference_id?: string | null
-          type?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+          amount?: number;
+          balance_after?: number;
+          created_at?: string;
+          id?: string;
+          note?: string | null;
+          reference_id?: string | null;
+          type?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       invest_wallet: {
         Row: {
-          balance: number
-          currency: string
-          locked: number
-          updated_at: string
-          user_id: string
-        }
+          balance: number;
+          currency: string;
+          locked: number;
+          updated_at: string;
+          user_id: string;
+        };
         Insert: {
-          balance?: number
-          currency?: string
-          locked?: number
-          updated_at?: string
-          user_id: string
-        }
+          balance?: number;
+          currency?: string;
+          locked?: number;
+          updated_at?: string;
+          user_id: string;
+        };
         Update: {
-          balance?: number
-          currency?: string
-          locked?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+          balance?: number;
+          currency?: string;
+          locked?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       notifications: {
         Row: {
-          body: string
-          created_at: string
-          id: string
-          read_at: string | null
-          title: string
-          user_id: string
-        }
+          body: string;
+          created_at: string;
+          id: string;
+          read_at: string | null;
+          title: string;
+          user_id: string;
+        };
         Insert: {
-          body?: string
-          created_at?: string
-          id?: string
-          read_at?: string | null
-          title: string
-          user_id: string
-        }
+          body?: string;
+          created_at?: string;
+          id?: string;
+          read_at?: string | null;
+          title: string;
+          user_id: string;
+        };
         Update: {
-          body?: string
-          created_at?: string
-          id?: string
-          read_at?: string | null
-          title?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+          body?: string;
+          created_at?: string;
+          id?: string;
+          read_at?: string | null;
+          title?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       onboarding_missions: {
         Row: {
-          description: string
-          id: string
-          order_index: number
-          reward: number
-          title: string
-        }
+          description: string;
+          id: string;
+          order_index: number;
+          reward: number;
+          title: string;
+        };
         Insert: {
-          description: string
-          id: string
-          order_index?: number
-          reward?: number
-          title: string
-        }
+          description: string;
+          id: string;
+          order_index?: number;
+          reward?: number;
+          title: string;
+        };
         Update: {
-          description?: string
-          id?: string
-          order_index?: number
-          reward?: number
-          title?: string
-        }
-        Relationships: []
-      }
+          description?: string;
+          id?: string;
+          order_index?: number;
+          reward?: number;
+          title?: string;
+        };
+        Relationships: [];
+      };
       payments: {
         Row: {
-          activation_code_id: string | null
-          amount: number
-          created_at: string
-          currency: string
-          email: string
-          gateway: string
-          id: string
-          payment_reference: string
-          raw: Json
-          status: string
-          updated_at: string
-          user_id: string
-        }
+          activation_code_id: string | null;
+          amount: number;
+          created_at: string;
+          currency: string;
+          email: string;
+          gateway: string;
+          id: string;
+          payment_reference: string;
+          raw: Json;
+          status: string;
+          updated_at: string;
+          user_id: string;
+        };
         Insert: {
-          activation_code_id?: string | null
-          amount: number
-          created_at?: string
-          currency?: string
-          email: string
-          gateway: string
-          id?: string
-          payment_reference: string
-          raw?: Json
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
+          activation_code_id?: string | null;
+          amount: number;
+          created_at?: string;
+          currency?: string;
+          email: string;
+          gateway: string;
+          id?: string;
+          payment_reference: string;
+          raw?: Json;
+          status?: string;
+          updated_at?: string;
+          user_id: string;
+        };
         Update: {
-          activation_code_id?: string | null
-          amount?: number
-          created_at?: string
-          currency?: string
-          email?: string
-          gateway?: string
-          id?: string
-          payment_reference?: string
-          raw?: Json
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
+          activation_code_id?: string | null;
+          amount?: number;
+          created_at?: string;
+          currency?: string;
+          email?: string;
+          gateway?: string;
+          id?: string;
+          payment_reference?: string;
+          raw?: Json;
+          status?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "payments_activation_code_id_fkey"
-            columns: ["activation_code_id"]
-            isOneToOne: false
-            referencedRelation: "activation_codes"
-            referencedColumns: ["id"]
+            foreignKeyName: "payments_activation_code_id_fkey";
+            columns: ["activation_code_id"];
+            isOneToOne: false;
+            referencedRelation: "activation_codes";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       profiles: {
         Row: {
-          activated_at: string | null
-          bix_level: number
-          bix_score: number
-          created_at: string
-          current_stake_level: number
-          current_streak: number
-          email: string
-          email_normalized: string | null
-          full_name: string
-          id: string
-          last_claim_date: string | null
-          membership_status: Database["public"]["Enums"]["membership_status"]
-          referral_code: string
-          referred_by: string | null
-          updated_at: string
-          verified: boolean
-          vst_balance: number
-          vst_locked: number
-        }
+          activated_at: string | null;
+          bix_level: number;
+          bix_score: number;
+          created_at: string;
+          current_stake_level: number;
+          current_streak: number;
+          email: string;
+          email_normalized: string | null;
+          full_name: string;
+          id: string;
+          last_claim_date: string | null;
+          membership_status: Database["public"]["Enums"]["membership_status"];
+          referral_code: string;
+          referred_by: string | null;
+          updated_at: string;
+          verified: boolean;
+          vst_balance: number;
+          vst_locked: number;
+        };
         Insert: {
-          activated_at?: string | null
-          bix_level?: number
-          bix_score?: number
-          created_at?: string
-          current_stake_level?: number
-          current_streak?: number
-          email: string
-          email_normalized?: string | null
-          full_name?: string
-          id: string
-          last_claim_date?: string | null
-          membership_status?: Database["public"]["Enums"]["membership_status"]
-          referral_code: string
-          referred_by?: string | null
-          updated_at?: string
-          verified?: boolean
-          vst_balance?: number
-          vst_locked?: number
-        }
+          activated_at?: string | null;
+          bix_level?: number;
+          bix_score?: number;
+          created_at?: string;
+          current_stake_level?: number;
+          current_streak?: number;
+          email: string;
+          email_normalized?: string | null;
+          full_name?: string;
+          id: string;
+          last_claim_date?: string | null;
+          membership_status?: Database["public"]["Enums"]["membership_status"];
+          referral_code: string;
+          referred_by?: string | null;
+          updated_at?: string;
+          verified?: boolean;
+          vst_balance?: number;
+          vst_locked?: number;
+        };
         Update: {
-          activated_at?: string | null
-          bix_level?: number
-          bix_score?: number
-          created_at?: string
-          current_stake_level?: number
-          current_streak?: number
-          email?: string
-          email_normalized?: string | null
-          full_name?: string
-          id?: string
-          last_claim_date?: string | null
-          membership_status?: Database["public"]["Enums"]["membership_status"]
-          referral_code?: string
-          referred_by?: string | null
-          updated_at?: string
-          verified?: boolean
-          vst_balance?: number
-          vst_locked?: number
-        }
+          activated_at?: string | null;
+          bix_level?: number;
+          bix_score?: number;
+          created_at?: string;
+          current_stake_level?: number;
+          current_streak?: number;
+          email?: string;
+          email_normalized?: string | null;
+          full_name?: string;
+          id?: string;
+          last_claim_date?: string | null;
+          membership_status?: Database["public"]["Enums"]["membership_status"];
+          referral_code?: string;
+          referred_by?: string | null;
+          updated_at?: string;
+          verified?: boolean;
+          vst_balance?: number;
+          vst_locked?: number;
+        };
         Relationships: [
           {
-            foreignKeyName: "profiles_referred_by_fkey"
-            columns: ["referred_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
+            foreignKeyName: "profiles_referred_by_fkey";
+            columns: ["referred_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       rate_limits: {
         Row: {
-          action: string
-          created_at: string
-          id: string
-          user_id: string
-        }
+          action: string;
+          created_at: string;
+          id: string;
+          user_id: string;
+        };
         Insert: {
-          action: string
-          created_at?: string
-          id?: string
-          user_id: string
-        }
+          action: string;
+          created_at?: string;
+          id?: string;
+          user_id: string;
+        };
         Update: {
-          action?: string
-          created_at?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
+          action?: string;
+          created_at?: string;
+          id?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       referral_rewards: {
         Row: {
-          amount: number
-          created_at: string
-          id: string
-          referred_id: string
-          referrer_id: string
-          status: string
-        }
+          amount: number;
+          created_at: string;
+          id: string;
+          referred_id: string;
+          referrer_id: string;
+          status: string;
+        };
         Insert: {
-          amount: number
-          created_at?: string
-          id?: string
-          referred_id: string
-          referrer_id: string
-          status?: string
-        }
+          amount: number;
+          created_at?: string;
+          id?: string;
+          referred_id: string;
+          referrer_id: string;
+          status?: string;
+        };
         Update: {
-          amount?: number
-          created_at?: string
-          id?: string
-          referred_id?: string
-          referrer_id?: string
-          status?: string
-        }
-        Relationships: []
-      }
+          amount?: number;
+          created_at?: string;
+          id?: string;
+          referred_id?: string;
+          referrer_id?: string;
+          status?: string;
+        };
+        Relationships: [];
+      };
       referrals: {
         Row: {
-          created_at: string
-          id: string
-          referred_id: string
-          referrer_id: string
-        }
+          created_at: string;
+          id: string;
+          referred_id: string;
+          referrer_id: string;
+        };
         Insert: {
-          created_at?: string
-          id?: string
-          referred_id: string
-          referrer_id: string
-        }
+          created_at?: string;
+          id?: string;
+          referred_id: string;
+          referrer_id: string;
+        };
         Update: {
-          created_at?: string
-          id?: string
-          referred_id?: string
-          referrer_id?: string
-        }
-        Relationships: []
-      }
+          created_at?: string;
+          id?: string;
+          referred_id?: string;
+          referrer_id?: string;
+        };
+        Relationships: [];
+      };
       stake_levels: {
         Row: {
-          created_at: string
-          level: number
-          name: string
-          vst_required: number
-        }
+          created_at: string;
+          level: number;
+          name: string;
+          vst_required: number;
+        };
         Insert: {
-          created_at?: string
-          level: number
-          name: string
-          vst_required: number
-        }
+          created_at?: string;
+          level: number;
+          name: string;
+          vst_required: number;
+        };
         Update: {
-          created_at?: string
-          level?: number
-          name?: string
-          vst_required?: number
-        }
-        Relationships: []
-      }
+          created_at?: string;
+          level?: number;
+          name?: string;
+          vst_required?: number;
+        };
+        Relationships: [];
+      };
       stakes: {
         Row: {
-          amount: number
-          created_at: string
-          id: string
-          level: number
-          status: Database["public"]["Enums"]["stake_status"]
-          unstaked_at: string | null
-          user_id: string
-        }
+          amount: number;
+          created_at: string;
+          id: string;
+          level: number;
+          status: Database["public"]["Enums"]["stake_status"];
+          unstaked_at: string | null;
+          user_id: string;
+        };
         Insert: {
-          amount: number
-          created_at?: string
-          id?: string
-          level: number
-          status?: Database["public"]["Enums"]["stake_status"]
-          unstaked_at?: string | null
-          user_id: string
-        }
+          amount: number;
+          created_at?: string;
+          id?: string;
+          level: number;
+          status?: Database["public"]["Enums"]["stake_status"];
+          unstaked_at?: string | null;
+          user_id: string;
+        };
         Update: {
-          amount?: number
-          created_at?: string
-          id?: string
-          level?: number
-          status?: Database["public"]["Enums"]["stake_status"]
-          unstaked_at?: string | null
-          user_id?: string
-        }
+          amount?: number;
+          created_at?: string;
+          id?: string;
+          level?: number;
+          status?: Database["public"]["Enums"]["stake_status"];
+          unstaked_at?: string | null;
+          user_id?: string;
+        };
         Relationships: [
           {
-            foreignKeyName: "stakes_level_fkey"
-            columns: ["level"]
-            isOneToOne: false
-            referencedRelation: "stake_levels"
-            referencedColumns: ["level"]
+            foreignKeyName: "stakes_level_fkey";
+            columns: ["level"];
+            isOneToOne: false;
+            referencedRelation: "stake_levels";
+            referencedColumns: ["level"];
           },
-        ]
-      }
+        ];
+      };
       task_submissions: {
         Row: {
-          campaign_id: string | null
-          created_at: string
-          id: string
-          proof: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          status: Database["public"]["Enums"]["submission_status"]
-          task_id: string | null
-          user_id: string
-          vst_awarded: number
-        }
+          campaign_id: string | null;
+          created_at: string;
+          id: string;
+          proof: string;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          status: Database["public"]["Enums"]["submission_status"];
+          task_id: string | null;
+          user_id: string;
+          vst_awarded: number;
+        };
         Insert: {
-          campaign_id?: string | null
-          created_at?: string
-          id?: string
-          proof?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: Database["public"]["Enums"]["submission_status"]
-          task_id?: string | null
-          user_id: string
-          vst_awarded?: number
-        }
+          campaign_id?: string | null;
+          created_at?: string;
+          id?: string;
+          proof?: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: Database["public"]["Enums"]["submission_status"];
+          task_id?: string | null;
+          user_id: string;
+          vst_awarded?: number;
+        };
         Update: {
-          campaign_id?: string | null
-          created_at?: string
-          id?: string
-          proof?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          status?: Database["public"]["Enums"]["submission_status"]
-          task_id?: string | null
-          user_id?: string
-          vst_awarded?: number
-        }
+          campaign_id?: string | null;
+          created_at?: string;
+          id?: string;
+          proof?: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: Database["public"]["Enums"]["submission_status"];
+          task_id?: string | null;
+          user_id?: string;
+          vst_awarded?: number;
+        };
         Relationships: [
           {
-            foreignKeyName: "task_submissions_campaign_id_fkey"
-            columns: ["campaign_id"]
-            isOneToOne: false
-            referencedRelation: "campaigns"
-            referencedColumns: ["id"]
+            foreignKeyName: "task_submissions_campaign_id_fkey";
+            columns: ["campaign_id"];
+            isOneToOne: false;
+            referencedRelation: "campaigns";
+            referencedColumns: ["id"];
           },
           {
-            foreignKeyName: "task_submissions_task_id_fkey"
-            columns: ["task_id"]
-            isOneToOne: false
-            referencedRelation: "tasks"
-            referencedColumns: ["id"]
+            foreignKeyName: "task_submissions_task_id_fkey";
+            columns: ["task_id"];
+            isOneToOne: false;
+            referencedRelation: "tasks";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       tasks: {
         Row: {
-          created_at: string
-          created_by: string | null
-          description: string
-          ends_at: string | null
-          id: string
-          starts_at: string | null
-          status: Database["public"]["Enums"]["task_status"]
-          title: string
-          type: Database["public"]["Enums"]["task_type"]
-          vst_reward: number
-        }
+          created_at: string;
+          created_by: string | null;
+          description: string;
+          ends_at: string | null;
+          id: string;
+          starts_at: string | null;
+          status: Database["public"]["Enums"]["task_status"];
+          title: string;
+          type: Database["public"]["Enums"]["task_type"];
+          vst_reward: number;
+        };
         Insert: {
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          ends_at?: string | null
-          id?: string
-          starts_at?: string | null
-          status?: Database["public"]["Enums"]["task_status"]
-          title: string
-          type?: Database["public"]["Enums"]["task_type"]
-          vst_reward?: number
-        }
+          created_at?: string;
+          created_by?: string | null;
+          description?: string;
+          ends_at?: string | null;
+          id?: string;
+          starts_at?: string | null;
+          status?: Database["public"]["Enums"]["task_status"];
+          title: string;
+          type?: Database["public"]["Enums"]["task_type"];
+          vst_reward?: number;
+        };
         Update: {
-          created_at?: string
-          created_by?: string | null
-          description?: string
-          ends_at?: string | null
-          id?: string
-          starts_at?: string | null
-          status?: Database["public"]["Enums"]["task_status"]
-          title?: string
-          type?: Database["public"]["Enums"]["task_type"]
-          vst_reward?: number
-        }
-        Relationships: []
-      }
+          created_at?: string;
+          created_by?: string | null;
+          description?: string;
+          ends_at?: string | null;
+          id?: string;
+          starts_at?: string | null;
+          status?: Database["public"]["Enums"]["task_status"];
+          title?: string;
+          type?: Database["public"]["Enums"]["task_type"];
+          vst_reward?: number;
+        };
+        Relationships: [];
+      };
       user_missions: {
         Row: {
-          completed_at: string | null
-          created_at: string
-          id: string
-          mission_id: string
-          status: string
-          user_id: string
-          vst_awarded: number
-        }
+          completed_at: string | null;
+          created_at: string;
+          id: string;
+          mission_id: string;
+          status: string;
+          user_id: string;
+          vst_awarded: number;
+        };
         Insert: {
-          completed_at?: string | null
-          created_at?: string
-          id?: string
-          mission_id: string
-          status?: string
-          user_id: string
-          vst_awarded?: number
-        }
+          completed_at?: string | null;
+          created_at?: string;
+          id?: string;
+          mission_id: string;
+          status?: string;
+          user_id: string;
+          vst_awarded?: number;
+        };
         Update: {
-          completed_at?: string | null
-          created_at?: string
-          id?: string
-          mission_id?: string
-          status?: string
-          user_id?: string
-          vst_awarded?: number
-        }
+          completed_at?: string | null;
+          created_at?: string;
+          id?: string;
+          mission_id?: string;
+          status?: string;
+          user_id?: string;
+          vst_awarded?: number;
+        };
         Relationships: [
           {
-            foreignKeyName: "user_missions_mission_id_fkey"
-            columns: ["mission_id"]
-            isOneToOne: false
-            referencedRelation: "onboarding_missions"
-            referencedColumns: ["id"]
+            foreignKeyName: "user_missions_mission_id_fkey";
+            columns: ["mission_id"];
+            isOneToOne: false;
+            referencedRelation: "onboarding_missions";
+            referencedColumns: ["id"];
           },
-        ]
-      }
+        ];
+      };
       user_roles: {
         Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
+          created_at: string;
+          id: string;
+          role: Database["public"]["Enums"]["app_role"];
+          user_id: string;
+        };
         Insert: {
-          created_at?: string
-          id?: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
+          created_at?: string;
+          id?: string;
+          role: Database["public"]["Enums"]["app_role"];
+          user_id: string;
+        };
         Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
-      }
+          created_at?: string;
+          id?: string;
+          role?: Database["public"]["Enums"]["app_role"];
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       wallet_transactions: {
         Row: {
-          amount: number
-          balance_after: number
-          created_at: string
-          destination: string
-          id: string
-          note: string
-          reference_id: string | null
-          reference_table: string | null
-          source: string
-          status: string
-          tx_ref: string
-          type: Database["public"]["Enums"]["tx_type"]
-          user_id: string
-        }
+          amount: number;
+          balance_after: number;
+          created_at: string;
+          destination: string;
+          id: string;
+          note: string;
+          reference_id: string | null;
+          reference_table: string | null;
+          source: string;
+          status: string;
+          tx_ref: string;
+          type: Database["public"]["Enums"]["tx_type"];
+          user_id: string;
+        };
         Insert: {
-          amount: number
-          balance_after: number
-          created_at?: string
-          destination?: string
-          id?: string
-          note?: string
-          reference_id?: string | null
-          reference_table?: string | null
-          source?: string
-          status?: string
-          tx_ref?: string
-          type: Database["public"]["Enums"]["tx_type"]
-          user_id: string
-        }
+          amount: number;
+          balance_after: number;
+          created_at?: string;
+          destination?: string;
+          id?: string;
+          note?: string;
+          reference_id?: string | null;
+          reference_table?: string | null;
+          source?: string;
+          status?: string;
+          tx_ref?: string;
+          type: Database["public"]["Enums"]["tx_type"];
+          user_id: string;
+        };
         Update: {
-          amount?: number
-          balance_after?: number
-          created_at?: string
-          destination?: string
-          id?: string
-          note?: string
-          reference_id?: string | null
-          reference_table?: string | null
-          source?: string
-          status?: string
-          tx_ref?: string
-          type?: Database["public"]["Enums"]["tx_type"]
-          user_id?: string
-        }
-        Relationships: []
-      }
-    }
+          amount?: number;
+          balance_after?: number;
+          created_at?: string;
+          destination?: string;
+          id?: string;
+          note?: string;
+          reference_id?: string | null;
+          reference_table?: string | null;
+          source?: string;
+          status?: string;
+          tx_ref?: string;
+          type?: Database["public"]["Enums"]["tx_type"];
+          user_id?: string;
+        };
+        Relationships: [];
+      };
+    };
     Views: {
-      [_ in never]: never
-    }
+      [_ in never]: never;
+    };
     Functions: {
       check_rate_limit: {
         Args: {
-          _action: string
-          _max: number
-          _user_id: string
-          _window_seconds: number
-        }
-        Returns: boolean
-      }
-      generate_referral_code: { Args: never; Returns: string }
+          _action: string;
+          _max: number;
+          _user_id: string;
+          _window_seconds: number;
+        };
+        Returns: boolean;
+      };
+      generate_referral_code: { Args: never; Returns: string };
       has_role: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
-      is_admin: { Args: { _user_id: string }; Returns: boolean }
+          _role: Database["public"]["Enums"]["app_role"];
+          _user_id: string;
+        };
+        Returns: boolean;
+      };
+      is_admin: { Args: { _user_id: string }; Returns: boolean };
       log_audit: {
         Args: {
-          _action: string
-          _actor: string
-          _payload: Json
-          _target_id: string
-          _target_type: string
-        }
-        Returns: undefined
-      }
+          _action: string;
+          _actor: string;
+          _payload: Json;
+          _target_id: string;
+          _target_type: string;
+        };
+        Returns: undefined;
+      };
       post_ledger: {
         Args: {
-          _amount: number
-          _destination?: string
-          _note?: string
-          _reference_id?: string
-          _reference_table?: string
-          _source?: string
-          _type: string
-          _user_id: string
-        }
+          _amount: number;
+          _destination?: string;
+          _note?: string;
+          _reference_id?: string;
+          _reference_table?: string;
+          _source?: string;
+          _type: string;
+          _user_id: string;
+        };
         Returns: {
-          balance_after: number
-          tx_id: string
-        }[]
-      }
-      recompute_bix_score: { Args: { _user_id: string }; Returns: number }
-    }
+          balance_after: number;
+          tx_id: string;
+        }[];
+      };
+      recompute_bix_score: { Args: { _user_id: string }; Returns: number };
+    };
     Enums: {
-      app_role: "super_admin" | "admin" | "user"
-      code_status: "unused" | "used" | "disabled"
-      membership_status: "pending" | "active" | "suspended"
-      stake_status: "active" | "unstaked"
-      submission_status: "pending" | "approved" | "rejected"
-      task_status: "draft" | "active" | "paused" | "ended"
-      task_type: "engagement" | "community" | "brand" | "challenge"
+      app_role: "super_admin" | "admin" | "user";
+      code_status: "unused" | "used" | "disabled";
+      membership_status: "pending" | "active" | "suspended";
+      stake_status: "active" | "unstaked";
+      submission_status: "pending" | "approved" | "rejected";
+      task_status: "draft" | "active" | "paused" | "ended";
+      task_type: "engagement" | "community" | "brand" | "challenge";
       tx_type:
         | "earn"
         | "spend"
@@ -952,130 +946,128 @@ export type Database = {
         | "daily"
         | "mission"
         | "campaign"
-        | "activation_payment"
-    }
+        | "activation_payment";
+    };
     CompositeTypes: {
-      [_ in never]: never
-    }
-  }
-}
+      [_ in never]: never;
+    };
+  };
+};
 
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">;
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">];
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
+    schema: keyof DatabaseWithoutInternals;
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
+  schema: keyof DatabaseWithoutInternals;
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
       DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-      Row: infer R
+      Row: infer R;
     }
     ? R
     : never
-  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] & DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R;
       }
       ? R
       : never
-    : never
+    : never;
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
+    schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
+  schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Insert: infer I
+      Insert: infer I;
     }
     ? I
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
+        Insert: infer I;
       }
       ? I
       : never
-    : never
+    : never;
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
+    schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
     : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
+  schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-      Update: infer U
+      Update: infer U;
     }
     ? U
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
     ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
+        Update: infer U;
       }
       ? U
       : never
-    : never
+    : never;
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
+    schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
     : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
+  schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
     ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
+    : never;
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-    schema: keyof DatabaseWithoutInternals
+    schema: keyof DatabaseWithoutInternals;
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
     : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
-  schema: keyof DatabaseWithoutInternals
+  schema: keyof DatabaseWithoutInternals;
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
+    : never;
 
 export const Constants = {
   public: {
@@ -1101,4 +1093,4 @@ export const Constants = {
       ],
     },
   },
-} as const
+} as const;

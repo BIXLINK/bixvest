@@ -12,7 +12,9 @@ export const Route = createFileRoute("/_authenticated/admin/ledger")({
   component: LedgerPage,
 });
 
-function fmt(n: number) { return new Intl.NumberFormat("en-US").format(n); }
+function fmt(n: number) {
+  return new Intl.NumberFormat("en-US").format(n);
+}
 
 function LedgerPage() {
   const fetchLedger = useServerFn(getLedgerPage);
@@ -23,15 +25,31 @@ function LedgerPage() {
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["ledger", userId, type, offset],
-    queryFn: () => fetchLedger({ data: { user_id: userId || undefined, type: type || undefined, limit, offset } }),
+    queryFn: () =>
+      fetchLedger({
+        data: { user_id: userId || undefined, type: type || undefined, limit, offset },
+      }),
   });
 
   function exportCsv() {
     const rows = data?.rows ?? [];
     const header = "id,user_id,type,amount,balance_after,source,destination,note,created_at";
-    const csv = [header, ...rows.map((r: any) =>
-      [r.id, r.user_id, r.type, r.amount, r.balance_after, r.source, r.destination, JSON.stringify(r.note ?? ""), r.created_at].join(",")
-    )].join("\n");
+    const csv = [
+      header,
+      ...rows.map((r: any) =>
+        [
+          r.id,
+          r.user_id,
+          r.type,
+          r.amount,
+          r.balance_after,
+          r.source,
+          r.destination,
+          JSON.stringify(r.note ?? ""),
+          r.created_at,
+        ].join(","),
+      ),
+    ].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
@@ -50,14 +68,31 @@ function LedgerPage() {
         <div className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-card p-4">
           <div className="flex-1 min-w-[200px]">
             <label className="text-xs text-muted-foreground">User ID</label>
-            <Input value={userId} onChange={e => setUserId(e.target.value)} placeholder="uuid (optional)" />
+            <Input
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              placeholder="uuid (optional)"
+            />
           </div>
           <div className="flex-1 min-w-[140px]">
             <label className="text-xs text-muted-foreground">Type</label>
-            <Input value={type} onChange={e => setType(e.target.value)} placeholder="earn, stake, daily…" />
+            <Input
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+              placeholder="earn, stake, daily…"
+            />
           </div>
-          <Button onClick={() => { setOffset(0); refetch(); }}>Filter</Button>
-          <Button variant="outline" onClick={exportCsv}>Export CSV</Button>
+          <Button
+            onClick={() => {
+              setOffset(0);
+              refetch();
+            }}
+          >
+            Filter
+          </Button>
+          <Button variant="outline" onClick={exportCsv}>
+            Export CSV
+          </Button>
         </div>
 
         <div className="rounded-xl border border-border bg-card overflow-x-auto">
@@ -75,22 +110,43 @@ function LedgerPage() {
             </thead>
             <tbody className="divide-y divide-border">
               {isLoading ? (
-                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">Loading…</td></tr>
-              ) : (data?.rows ?? []).length === 0 ? (
-                <tr><td colSpan={7} className="p-6 text-center text-muted-foreground">No entries.</td></tr>
-              ) : data!.rows.map((r: any) => (
-                <tr key={r.id}>
-                  <td className="px-3 py-2 whitespace-nowrap text-xs">{new Date(r.created_at).toLocaleString()}</td>
-                  <td className="px-3 py-2 whitespace-nowrap text-xs">{r.profiles?.full_name || r.user_id.slice(0, 8)}</td>
-                  <td className="px-3 py-2"><span className="rounded-full bg-muted px-2 py-0.5 text-xs">{r.type}</span></td>
-                  <td className={`px-3 py-2 text-right font-medium ${Number(r.amount) >= 0 ? "text-success" : "text-destructive"}`}>
-                    {Number(r.amount) >= 0 ? "+" : ""}{fmt(r.amount)}
+                <tr>
+                  <td colSpan={7} className="p-6 text-center text-muted-foreground">
+                    Loading…
                   </td>
-                  <td className="px-3 py-2 text-right">{fmt(r.balance_after)}</td>
-                  <td className="px-3 py-2 text-xs text-muted-foreground">{r.source} → {r.destination}</td>
-                  <td className="px-3 py-2 text-xs">{r.note}</td>
                 </tr>
-              ))}
+              ) : (data?.rows ?? []).length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="p-6 text-center text-muted-foreground">
+                    No entries.
+                  </td>
+                </tr>
+              ) : (
+                data!.rows.map((r: any) => (
+                  <tr key={r.id}>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">
+                      {new Date(r.created_at).toLocaleString()}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">
+                      {r.profiles?.full_name || r.user_id.slice(0, 8)}
+                    </td>
+                    <td className="px-3 py-2">
+                      <span className="rounded-full bg-muted px-2 py-0.5 text-xs">{r.type}</span>
+                    </td>
+                    <td
+                      className={`px-3 py-2 text-right font-medium ${Number(r.amount) >= 0 ? "text-success" : "text-destructive"}`}
+                    >
+                      {Number(r.amount) >= 0 ? "+" : ""}
+                      {fmt(r.amount)}
+                    </td>
+                    <td className="px-3 py-2 text-right">{fmt(r.balance_after)}</td>
+                    <td className="px-3 py-2 text-xs text-muted-foreground">
+                      {r.source} → {r.destination}
+                    </td>
+                    <td className="px-3 py-2 text-xs">{r.note}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -98,8 +154,22 @@ function LedgerPage() {
         <div className="flex items-center justify-between text-sm">
           <div className="text-muted-foreground">Total: {data?.total ?? 0}</div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - limit))}>Prev</Button>
-            <Button variant="outline" size="sm" disabled={(data?.rows?.length ?? 0) < limit} onClick={() => setOffset(offset + limit)}>Next</Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={offset === 0}
+              onClick={() => setOffset(Math.max(0, offset - limit))}
+            >
+              Prev
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={(data?.rows?.length ?? 0) < limit}
+              onClick={() => setOffset(offset + limit)}
+            >
+              Next
+            </Button>
           </div>
         </div>
       </div>

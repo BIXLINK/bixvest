@@ -18,15 +18,22 @@ export const Route = createFileRoute("/_authenticated/referrals")({
 function ReferralsPage() {
   const { data: profile } = useProfile();
   const link = profile?.referral_code
-    ? (typeof window !== "undefined" ? `${window.location.origin}/auth?mode=signup&ref=${profile.referral_code}` : "")
+    ? typeof window !== "undefined"
+      ? `${window.location.origin}/auth?mode=signup&ref=${profile.referral_code}`
+      : ""
     : "";
 
   const { data: network = [] } = useQuery({
     queryKey: ["network", profile?.id],
     enabled: !!profile?.id,
     queryFn: async () => {
-      const { data } = await supabase.from("referrals").select("*, referred:profiles!referrals_referred_id_fkey(full_name, email, membership_status, created_at)")
-        .eq("referrer_id", profile!.id).order("created_at", { ascending: false });
+      const { data } = await supabase
+        .from("referrals")
+        .select(
+          "*, referred:profiles!referrals_referred_id_fkey(full_name, email, membership_status, created_at)",
+        )
+        .eq("referrer_id", profile!.id)
+        .order("created_at", { ascending: false });
       return data ?? [];
     },
   });
@@ -41,37 +48,59 @@ function ReferralsPage() {
       <div className="mx-auto max-w-4xl space-y-6">
         <div>
           <h1 className="font-display text-3xl font-bold">Referral Network</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Invite members and grow your network.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Invite members and grow your network.
+          </p>
         </div>
 
         <div className="rounded-xl border border-transparent bg-gradient-card p-6 text-white shadow-elegant">
           <div className="text-xs uppercase tracking-wider text-white/60">Your VST Referral ID</div>
-          <div className="mt-2 font-display text-3xl font-bold tracking-wider">{profile?.referral_code ?? "—"}</div>
+          <div className="mt-2 font-display text-3xl font-bold tracking-wider">
+            {profile?.referral_code ?? "—"}
+          </div>
           <div className="mt-4 flex gap-2">
             <Input readOnly value={link} className="bg-white/10 border-white/20 text-white" />
-            <Button variant="secondary" onClick={() => copy(link)}><Copy className="h-4 w-4" /></Button>
+            <Button variant="secondary" onClick={() => copy(link)}>
+              <Copy className="h-4 w-4" />
+            </Button>
           </div>
-          <div className="mt-3 text-xs text-white/60">Referrals don't auto-activate — new members still need an activation code.</div>
+          <div className="mt-3 text-xs text-white/60">
+            Referrals don't auto-activate — new members still need an activation code.
+          </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Stat label="Total invites" value={network.length} icon={Users} />
-          <Stat label="Active members" value={network.filter((n: any) => n.referred?.membership_status === "active").length} icon={Share2} />
+          <Stat
+            label="Active members"
+            value={network.filter((n: any) => n.referred?.membership_status === "active").length}
+            icon={Share2}
+          />
         </div>
 
         <div className="rounded-xl border border-border bg-card">
-          <div className="border-b border-border px-6 py-4 font-display font-semibold">Your network</div>
+          <div className="border-b border-border px-6 py-4 font-display font-semibold">
+            Your network
+          </div>
           {network.length === 0 ? (
-            <div className="p-8 text-center text-sm text-muted-foreground">No referrals yet. Share your link above.</div>
+            <div className="p-8 text-center text-sm text-muted-foreground">
+              No referrals yet. Share your link above.
+            </div>
           ) : (
             <ul className="divide-y divide-border">
               {network.map((n: any) => (
                 <li key={n.id} className="flex items-center justify-between px-6 py-3 text-sm">
                   <div>
-                    <div className="font-medium">{n.referred?.full_name || n.referred?.email || "Member"}</div>
-                    <div className="text-xs text-muted-foreground">{new Date(n.created_at).toLocaleDateString()}</div>
+                    <div className="font-medium">
+                      {n.referred?.full_name || n.referred?.email || "Member"}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(n.created_at).toLocaleDateString()}
+                    </div>
                   </div>
-                  <span className={`text-xs uppercase tracking-wider ${n.referred?.membership_status === "active" ? "text-success" : "text-muted-foreground"}`}>
+                  <span
+                    className={`text-xs uppercase tracking-wider ${n.referred?.membership_status === "active" ? "text-success" : "text-muted-foreground"}`}
+                  >
                     {n.referred?.membership_status ?? "—"}
                   </span>
                 </li>

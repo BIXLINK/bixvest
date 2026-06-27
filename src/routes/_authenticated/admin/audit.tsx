@@ -12,8 +12,11 @@ function AuditPage() {
   const { data: rows = [] } = useQuery({
     queryKey: ["audit"],
     queryFn: async () => {
-      const { data } = await (supabase as any).from("audit_log")
-        .select("*").order("created_at", { ascending: false }).limit(200);
+      const { data } = await (supabase as any)
+        .from("audit_log")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(200);
       return data ?? [];
     },
   });
@@ -38,16 +41,31 @@ function AuditPage() {
             </thead>
             <tbody className="divide-y divide-border">
               {rows.length === 0 ? (
-                <tr><td colSpan={5} className="p-6 text-center text-muted-foreground">No actions yet.</td></tr>
-              ) : rows.map((r: any) => (
-                <tr key={r.id}>
-                  <td className="px-3 py-2 whitespace-nowrap text-xs">{new Date(r.created_at).toLocaleString()}</td>
-                  <td className="px-3 py-2 whitespace-nowrap text-xs">{r.actor_id?.slice(0, 8)}</td>
-                  <td className="px-3 py-2 font-medium">{r.action}</td>
-                  <td className="px-3 py-2 text-xs">{r.target_type ?? "—"}{r.target_id ? `:${String(r.target_id).slice(0, 8)}` : ""}</td>
-                  <td className="px-3 py-2 text-xs"><code className="text-[10px]">{JSON.stringify(r.payload)}</code></td>
+                <tr>
+                  <td colSpan={5} className="p-6 text-center text-muted-foreground">
+                    No actions yet.
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                rows.map((r: any) => (
+                  <tr key={r.id}>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">
+                      {new Date(r.created_at).toLocaleString()}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap text-xs">
+                      {r.actor_id?.slice(0, 8)}
+                    </td>
+                    <td className="px-3 py-2 font-medium">{r.action}</td>
+                    <td className="px-3 py-2 text-xs">
+                      {r.target_type ?? "—"}
+                      {r.target_id ? `:${String(r.target_id).slice(0, 8)}` : ""}
+                    </td>
+                    <td className="px-3 py-2 text-xs">
+                      <code className="text-[10px]">{JSON.stringify(r.payload)}</code>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
