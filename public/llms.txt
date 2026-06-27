@@ -1,0 +1,10 @@
+# BIXVEST
+
+> BIXVEST is the foundation platform of Bixvest Holdings — a digital participation and growth ecosystem where users earn VST through community tasks and campaigns, stake into 10 progressive levels, and build a verifiable digital activity profile.
+
+BIXVEST combines a rewards hub, a 10-level staking vault, a ledger-driven wallet, a referral network, and an investment layer into one ecosystem. Every action a user takes produces a ledger entry, so VST balances, earnings, and stakes are fully traceable.
+
+## Pages
+
+- [Home](/): Overview of the BIXVEST ecosystem, core modules, and how to get started.
+- [Sign in or Create an Account](/auth): Sign in or register for a BIXVEST account and activate membership.

@@ -5,14 +5,19 @@ import { Button } from "@/components/ui/button";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "BIXVEST — Digital Participation & Growth Ecosystem" },
-      { name: "description", content: "Earn VST, stake into levels, build your digital activity profile. Powered by Bixvest Holdings." },
-      { property: "og:title", content: "BIXVEST — Digital Participation & Growth Ecosystem" },
-      { property: "og:description", content: "Earn VST, stake into levels, build your digital activity profile." },
+      { title: "BIXVEST — Earn VST, Stake & Grow Your Digital Profile" },
+      { name: "description", content: "Join BIXVEST: complete community tasks to earn VST, stake across 10 progressive levels, and build a verifiable digital activity profile from Bixvest Holdings." },
+      { property: "og:title", content: "BIXVEST — Earn VST, Stake & Grow Your Digital Profile" },
+      { property: "og:description", content: "Complete tasks, earn VST, stake into 10 levels, and grow your digital activity profile." },
+      { property: "og:url", content: "https://bixvest.lovable.app/" },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7b14809f-7dcd-43b7-8e42-a1b1f3348203/id-preview-ce1e802f--2098b46c-e5af-4655-8737-a9270e32e0cf.lovable.app-1781800520585.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7b14809f-7dcd-43b7-8e42-a1b1f3348203/id-preview-ce1e802f--2098b46c-e5af-4655-8737-a9270e32e0cf.lovable.app-1781800520585.png" },
     ],
+    links: [{ rel: "canonical", href: "https://bixvest.lovable.app/" }],
   }),
   component: Landing,
 });
+
 
 function Landing() {
   return (
@@ -31,7 +36,10 @@ function Landing() {
       </header>
 
       {/* Hero */}
+      <main>
+      {/* Hero */}
       <section className="relative overflow-hidden bg-hero text-white">
+
         <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs uppercase tracking-wider text-white/80">
@@ -100,6 +108,9 @@ function Landing() {
           </div>
         </div>
       </section>
+      </main>
+
+
 
       <footer className="border-t border-border py-8 text-center text-xs text-muted-foreground">
         © {new Date().getFullYear()} Bixvest Holdings. All rights reserved.

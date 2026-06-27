@@ -17,9 +17,19 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/auth")({
   validateSearch: searchSchema,
-  head: () => ({ meta: [{ title: "Sign in — BIXVEST" }] }),
+  head: () => ({
+    meta: [
+      { title: "Sign in or Create an Account — BIXVEST" },
+      { name: "description", content: "Sign in to BIXVEST or create your account to start earning VST, activating membership codes, and joining the digital participation ecosystem." },
+      { property: "og:title", content: "Sign in or Create an Account — BIXVEST" },
+      { property: "og:description", content: "Access your BIXVEST account, activate membership, and start earning VST." },
+      { property: "og:url", content: "https://bixvest.lovable.app/auth" },
+    ],
+    links: [{ rel: "canonical", href: "https://bixvest.lovable.app/auth" }],
+  }),
   component: AuthPage,
 });
+
 
 function AuthPage() {
   const navigate = useNavigate();

@@ -56,16 +56,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "BIXVEST — Digital Participation & Growth Ecosystem" },
-      { name: "description", content: "BIXVEST is the foundation platform of Bixvest Holdings — earn VST, stake into levels, and grow with a premium digital community." },
-      { property: "og:title", content: "BIXVEST — Digital Participation & Growth Ecosystem" },
-      { property: "og:description", content: "BIXVEST is the foundation platform of Bixvest Holdings — earn VST, stake into levels, and grow with a premium digital community." },
+      { title: "BIXVEST" },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "BIXVEST" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "BIXVEST — Digital Participation & Growth Ecosystem" },
-      { name: "twitter:description", content: "BIXVEST is the foundation platform of Bixvest Holdings — earn VST, stake into levels, and grow with a premium digital community." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7b14809f-7dcd-43b7-8e42-a1b1f3348203/id-preview-ce1e802f--2098b46c-e5af-4655-8737-a9270e32e0cf.lovable.app-1781800520585.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/7b14809f-7dcd-43b7-8e42-a1b1f3348203/id-preview-ce1e802f--2098b46c-e5af-4655-8737-a9270e32e0cf.lovable.app-1781800520585.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -73,7 +67,30 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              name: "BIXVEST",
+              url: "https://bixvest.lovable.app",
+              logo: "https://bixvest.lovable.app/favicon.ico",
+              parentOrganization: { "@type": "Organization", name: "Bixvest Holdings" },
+            },
+            {
+              "@type": "WebSite",
+              name: "BIXVEST",
+              url: "https://bixvest.lovable.app",
+            },
+          ],
+        }),
+      },
+    ],
   }),
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
