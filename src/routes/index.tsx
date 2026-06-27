@@ -36,7 +36,10 @@ function Landing() {
       </header>
 
       {/* Hero */}
+      <main>
+      {/* Hero */}
       <section className="relative overflow-hidden bg-hero text-white">
+
         <div className="mx-auto max-w-7xl px-4 py-24 lg:px-8 lg:py-32">
           <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-xs uppercase tracking-wider text-white/80">

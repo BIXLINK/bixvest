@@ -2,3 +2,15 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /_authenticated
+Disallow: /dashboard
+Disallow: /wallet
+Disallow: /vault
+Disallow: /rewards
+Disallow: /referrals
+Disallow: /daily
+Disallow: /invest
+Disallow: /profile
+Disallow: /activate
+Disallow: /reset-password
+
+Sitemap: https://bixvest.lovable.app/sitemap.xml

@@ -7,9 +7,20 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/reset-password")({
-  head: () => ({ meta: [{ title: "Reset password — BIXVEST" }] }),
+  head: () => ({
+    meta: [
+      { title: "Reset Your Password — BIXVEST" },
+      { name: "description", content: "Set a new password for your BIXVEST account to regain secure access to your VST wallet, staking vault, and rewards." },
+      { property: "og:title", content: "Reset Your Password — BIXVEST" },
+      { property: "og:description", content: "Securely set a new password for your BIXVEST account." },
+      { property: "og:url", content: "https://bixvest.lovable.app/reset-password" },
+      { name: "robots", content: "noindex,follow" },
+    ],
+    links: [{ rel: "canonical", href: "https://bixvest.lovable.app/reset-password" }],
+  }),
   component: ResetPassword,
 });
+
 
 function ResetPassword() {
   const navigate = useNavigate();
