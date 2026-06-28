@@ -191,7 +191,7 @@ function VaultPage() {
 function Stat({ label, value, hero }: { label: string; value: string; hero?: boolean }) {
   return (
     <div
-      className={`rounded-xl border p-5 ${hero ? "border-transparent bg-gradient-emerald text-primary-foreground shadow-glow" : "border-border bg-card"}`}
+      className={`rounded-xl border p-5 ${hero ? "border-transparent bg-[--color-blue-solid] text-white shadow-glow" : "border-border bg-card"}`}
     >
       <div
         className={`text-xs uppercase tracking-wider ${hero ? "text-white/70" : "text-muted-foreground"}`}

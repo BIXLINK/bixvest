@@ -15,6 +15,9 @@ import {
   Sun,
   Moon,
   TrendingUp,
+  Settings,
+  HelpCircle,
+  ArrowUpRight,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useIsAdmin } from "@/hooks/use-auth";
@@ -29,8 +32,9 @@ const navItems = [
   { to: "/vault", label: "Vault", icon: Vault },
   { to: "/invest", label: "Invest", icon: TrendingUp },
   { to: "/wallet", label: "Wallet", icon: Wallet },
+  { to: "/withdraw", label: "Withdraw", icon: ArrowUpRight },
   { to: "/referrals", label: "Referrals", icon: Users },
-  { to: "/profile", label: "Profile", icon: UserIcon },
+  { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
 const mobileNav = [
@@ -38,7 +42,7 @@ const mobileNav = [
   { to: "/daily", label: "Daily", icon: Sun },
   { to: "/rewards", label: "Earn", icon: Sparkles },
   { to: "/wallet", label: "Wallet", icon: Wallet },
-  { to: "/profile", label: "Me", icon: UserIcon },
+  { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
 function formatVst(n: number) {
@@ -121,9 +125,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <div className="text-[10px] uppercase tracking-wider text-sidebar-foreground/60">
                 BIX
               </div>
-              <div className="font-display text-base font-semibold">
-                {profile?.bix_score ?? 0}
-              </div>
+              <div className="font-display text-base font-semibold">{profile?.bix_score ?? 0}</div>
             </div>
           </div>
         </div>
@@ -160,18 +162,25 @@ export function AppLayout({ children }: { children: ReactNode }) {
             </Button>
             <div className="lg:hidden font-display font-bold">BIXVEST</div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <div className="hidden sm:flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5">
               <div className="h-2 w-2 rounded-full bg-primary" />
               <span className="text-xs font-medium">
                 {formatVst(Number(profile?.vst_balance ?? 0))} VST
               </span>
             </div>
+            <Link to="/notifications" title="Notifications">
+              <Button variant="ghost" size="icon">
+                <Bell className="h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/help" title="Help">
+              <Button variant="ghost" size="icon">
+                <HelpCircle className="h-4 w-4" />
+              </Button>
+            </Link>
             <Button variant="ghost" size="icon" onClick={toggle} aria-label="Toggle theme">
               {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </Button>
-            <Button variant="ghost" size="icon">
-              <Bell className="h-4 w-4" />
             </Button>
           </div>
         </header>

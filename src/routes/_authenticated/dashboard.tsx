@@ -209,7 +209,10 @@ function Dashboard() {
               </Link>
             </div>
             <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
-              <div className="h-full bg-gradient-emerald" style={{ width: `${progress}%` }} />
+              <div
+                className="h-full"
+                style={{ width: `${progress}%`, backgroundColor: "var(--color-blue-solid)" }}
+              />
             </div>
             <div className="mt-1.5 text-xs text-muted-foreground">
               {Math.floor(progress)}% toward {nextLevel.name}

@@ -1,6 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Sparkles, Vault, Trophy, Shield, ArrowRight, Layers, Users } from "lucide-react";
+import {
+  Sparkles,
+  Vault,
+  Trophy,
+  Shield,
+  ArrowRight,
+  Layers,
+  Users,
+  Sun,
+  Moon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useTheme } from "@/hooks/use-theme";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,15 +46,19 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const { theme, toggle } = useTheme();
+
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-border bg-white/80 backdrop-blur dark:bg-[--color-black-solid]/80">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
           <Link to="/" className="flex items-center gap-2">
             <img src="/bixvest logo.png" alt="BIXVEST" className="h-8 w-8 rounded-lg" />
-            <div className="font-display text-lg font-bold tracking-tight">BIXVEST</div>
+            <div className="font-display text-lg font-bold tracking-tight text-[--color-black-solid] dark:text-white">
+              BIXVEST
+            </div>
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Link
               to="/about"
               className="hidden sm:inline-flex text-sm font-medium text-muted-foreground hover:text-foreground"
@@ -53,6 +68,15 @@ function Landing() {
             <Link to="/auth" className="hidden sm:inline-flex">
               <Button variant="ghost">Sign in</Button>
             </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggle}
+              className="h-9 w-9"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
             <Link to="/auth">
               <Button>Get started</Button>
             </Link>
@@ -78,7 +102,7 @@ function Landing() {
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Link to="/auth">
-                  <Button size="lg" className="bg-gradient-emerald shadow-glow">
+                  <Button size="lg" className="bg-[--color-blue-solid] text-white hover:opacity-90">
                     Create your account <ArrowRight className="ml-1 h-4 w-4" />
                   </Button>
                 </Link>
@@ -171,7 +195,7 @@ function Landing() {
 
         {/* CTA */}
         <section className="mx-auto max-w-7xl px-4 pb-20 lg:px-8">
-          <div className="overflow-hidden rounded-2xl bg-hero p-10 text-white shadow-elegant lg:p-16">
+          <div className="overflow-hidden rounded-2xl bg-hero p-10 text-white shadow-elegant lg:p-16 dark:bg-gradient-to-br dark:from-[--color-black-solid] dark:via-[--color-black-solid] dark:to-blue-950">
             <div className="max-w-2xl">
               <h2 className="font-display text-3xl font-bold sm:text-4xl">
                 Ready to start earning VST?
@@ -181,7 +205,7 @@ function Landing() {
                 ecosystem.
               </p>
               <Link to="/auth" className="mt-6 inline-flex">
-                <Button size="lg" className="bg-gradient-gold text-gold-foreground">
+                <Button size="lg" className="bg-[--color-blue-solid] text-white hover:opacity-90">
                   Get started <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
               </Link>

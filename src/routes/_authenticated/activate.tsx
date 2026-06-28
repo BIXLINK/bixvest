@@ -81,7 +81,7 @@ function ActivatePage() {
           </div>
           <Button
             type="submit"
-            className="w-full bg-gradient-emerald shadow-glow"
+            className="w-full bg-[--color-blue-solid] text-white hover:opacity-90 transition-opacity"
             disabled={loading}
           >
             {loading ? "Activating..." : "Activate membership"}

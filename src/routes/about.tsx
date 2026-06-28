@@ -46,7 +46,7 @@ export default function AboutPage() {
           <div className="mt-6 flex gap-3">
             <Link
               to="/auth"
-              className="rounded-md bg-gradient-emerald px-4 py-2 text-sm font-medium text-white"
+              className="rounded-md bg-[--color-blue-solid] px-4 py-2 text-sm font-medium text-white hover:opacity-90 transition-opacity"
             >
               Get started
             </Link>
@@ -92,7 +92,7 @@ export default function AboutPage() {
           <div className="rounded-xl border border-border bg-card p-6">
             <div className="font-medium">Contact</div>
             <div className="mt-3 text-sm text-muted-foreground">
-              For partnerships, support, or developer inquiries, email {" "}
+              For partnerships, support, or developer inquiries, email{" "}
               <a href="mailto:bixvest@protonmail.com" className="text-primary hover:underline">
                 bixvest@protonmail.com
               </a>
