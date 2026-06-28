@@ -949,7 +949,6 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
     await rateLimit(supabaseAdmin, userId, "withdrawal", 5, 3600);
-      throw new Error("Too many withdrawal requests");
 
     if (data.amount < 50) throw new Error("Minimum withdrawal is 50 VST");
 
