@@ -874,7 +874,6 @@ export const transferVst = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const senderId = context.userId;
     await rateLimit(supabaseAdmin, senderId, "transfer", 10, 3600);
-      throw new Error("Too many transfers, try again later");
 
     const code = data.recipient_code.trim().toUpperCase();
     const { data: recipient } = await supabaseAdmin
