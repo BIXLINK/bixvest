@@ -953,6 +953,16 @@ export type Database = {
         | "mission"
         | "campaign"
         | "activation_payment"
+        | "vault_deposit"
+        | "vault_withdraw"
+        | "vault_interest"
+        | "transfer_in"
+        | "transfer_out"
+        | "withdrawal"
+        | "staking_reward"
+        | "stake_v2_lock"
+        | "stake_v2_unlock"
+        | "stake_v2_penalty"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1098,6 +1108,16 @@ export const Constants = {
         "mission",
         "campaign",
         "activation_payment",
+        "vault_deposit",
+        "vault_withdraw",
+        "vault_interest",
+        "transfer_in",
+        "transfer_out",
+        "withdrawal",
+        "staking_reward",
+        "stake_v2_lock",
+        "stake_v2_unlock",
+        "stake_v2_penalty",
       ],
     },
   },
