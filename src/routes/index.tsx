@@ -40,7 +40,7 @@ function Landing() {
       <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-emerald shadow-glow" />
+            <img src="/bixvest logo.png" alt="BIXVEST" className="h-8 w-8 rounded-lg" />
             <div className="font-display text-lg font-bold tracking-tight">BIXVEST</div>
           </Link>
           <div className="flex items-center gap-2">
