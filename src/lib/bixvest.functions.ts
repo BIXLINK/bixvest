@@ -853,3 +853,496 @@ export const getAdminAnalytics = createServerFn({ method: "GET" })
       volume7d,
     };
   });
+
+// ============================================================================
+// FINTECH MODULE: TRANSFER / WITHDRAWAL / VAULT / STAKING-POOLS
+// ============================================================================
+
+// ---- Transfer VST peer-to-peer ----
+export const transferVst = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { recipient_code: string; amount: number; note?: string }) =>
+    z
+      .object({
+        recipient_code: z.string().min(3),
+        amount: z.number().positive(),
+        note: z.string().max(200).optional(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const senderId = context.userId;
+    if (!(await rateLimit(supabaseAdmin, senderId, "transfer", 10, 3600)))
+      throw new Error("Too many transfers, try again later");
+
+    const code = data.recipient_code.trim().toUpperCase();
+    const { data: recipient } = await supabaseAdmin
+      .from("profiles")
+      .select("id, full_name, referral_code")
+      .eq("referral_code", code)
+      .maybeSingle();
+    if (!recipient) throw new Error("Recipient not found");
+    if (recipient.id === senderId) throw new Error("Cannot transfer to yourself");
+
+    await postLedger(supabaseAdmin, {
+      user_id: senderId,
+      type: "transfer_out",
+      amount: -Math.abs(data.amount),
+      destination: recipient.id,
+      note: data.note || `Transfer to ${recipient.full_name || code}`,
+    });
+    await postLedger(supabaseAdmin, {
+      user_id: recipient.id,
+      type: "transfer_in",
+      amount: Math.abs(data.amount),
+      source: senderId,
+      note: data.note || `Transfer from ${code}`,
+    });
+
+    await logAudit(supabaseAdmin, senderId, "transfer_vst", "profiles", recipient.id, {
+      amount: data.amount,
+    });
+    return { ok: true, recipient: recipient.full_name || code };
+  });
+
+// ---- Withdrawal methods ----
+export const createWithdrawalMethod = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (d: { method_type: "bank" | "crypto" | "internal"; label: string; details: any }) =>
+      z
+        .object({
+          method_type: z.enum(["bank", "crypto", "internal"]),
+          label: z.string().min(1).max(100),
+          details: z.record(z.any()),
+        })
+        .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row, error } = await supabaseAdmin
+      .from("withdrawal_methods")
+      .insert({
+        user_id: context.userId,
+        method_type: data.method_type,
+        label: data.label,
+        details: data.details,
+      })
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  });
+
+export const requestWithdrawal = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { method_id: string; amount: number; source?: string }) =>
+    z
+      .object({
+        method_id: z.string().uuid(),
+        amount: z.number().positive(),
+        source: z.enum(["main", "vault", "invest"]).default("main"),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const userId = context.userId;
+    if (!(await rateLimit(supabaseAdmin, userId, "withdrawal", 5, 3600)))
+      throw new Error("Too many withdrawal requests");
+
+    if (data.amount < 50) throw new Error("Minimum withdrawal is 50 VST");
+
+    const { data: method } = await supabaseAdmin
+      .from("withdrawal_methods")
+      .select("id, user_id")
+      .eq("id", data.method_id)
+      .maybeSingle();
+    if (!method || method.user_id !== userId) throw new Error("Invalid method");
+
+    const feePct = 1; // 1%
+    const fee = Math.round(data.amount * (feePct / 100) * 100) / 100;
+    const net = data.amount - fee;
+
+    // Lock the funds immediately (debit balance + record reservation)
+    const lock = await postLedger(supabaseAdmin, {
+      user_id: userId,
+      type: "withdrawal",
+      amount: -Math.abs(data.amount),
+      note: `Withdrawal pending review (${net} net, ${fee} fee)`,
+    });
+
+    const { data: w, error } = await supabaseAdmin
+      .from("withdrawals")
+      .insert({
+        user_id: userId,
+        source: data.source ?? "main",
+        amount: data.amount,
+        fee,
+        net_amount: net,
+        method_id: data.method_id,
+        status: "pending",
+        lock_tx_id: lock.tx_id,
+      })
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    await logAudit(supabaseAdmin, userId, "withdrawal_request", "withdrawals", w.id, {
+      amount: data.amount,
+    });
+    return w;
+  });
+
+export const reviewWithdrawal = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator(
+    (d: { withdrawal_id: string; approve: boolean; admin_note?: string; reference?: string }) =>
+      z
+        .object({
+          withdrawal_id: z.string().uuid(),
+          approve: z.boolean(),
+          admin_note: z.string().max(500).optional(),
+          reference: z.string().max(200).optional(),
+        })
+        .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const admin = await assertAdmin(context.userId);
+    const { data: w } = await admin
+      .from("withdrawals")
+      .select("*")
+      .eq("id", data.withdrawal_id)
+      .maybeSingle();
+    if (!w) throw new Error("Not found");
+    if (w.status !== "pending") throw new Error("Already processed");
+
+    if (data.approve) {
+      await admin
+        .from("withdrawals")
+        .update({
+          status: "completed",
+          admin_note: data.admin_note ?? null,
+          reference: data.reference ?? null,
+          processed_at: new Date().toISOString(),
+        })
+        .eq("id", w.id);
+    } else {
+      // refund the locked amount
+      const refund = await postLedger(admin, {
+        user_id: w.user_id,
+        type: "earn",
+        amount: Number(w.amount),
+        note: `Withdrawal rejected refund`,
+      });
+      await admin
+        .from("withdrawals")
+        .update({
+          status: "rejected",
+          admin_note: data.admin_note ?? null,
+          settle_tx_id: refund.tx_id,
+          processed_at: new Date().toISOString(),
+        })
+        .eq("id", w.id);
+    }
+    await logAudit(admin, context.userId, "withdrawal_review", "withdrawals", w.id, {
+      approve: data.approve,
+    });
+    return { ok: true };
+  });
+
+// ---- Vault ----
+export const vaultDeposit = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { amount: number; vault_type?: "flexible" | "locked"; lock_days?: number }) =>
+    z
+      .object({
+        amount: z.number().positive(),
+        vault_type: z.enum(["flexible", "locked"]).default("flexible"),
+        lock_days: z.number().int().min(0).max(365).optional(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const userId = context.userId;
+
+    await postLedger(supabaseAdmin, {
+      user_id: userId,
+      type: "vault_deposit",
+      amount: -Math.abs(data.amount),
+      note: `Vault deposit (${data.vault_type})`,
+    });
+
+    const apy = data.vault_type === "locked" ? 14 : 8;
+    const lock_until =
+      data.vault_type === "locked" && data.lock_days
+        ? new Date(Date.now() + data.lock_days * 86400_000).toISOString()
+        : null;
+
+    const { data: existing } = await supabaseAdmin
+      .from("vault_holdings")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("vault_type", data.vault_type)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (existing) {
+      await supabaseAdmin
+        .from("vault_holdings")
+        .update({ principal: Number(existing.principal) + data.amount })
+        .eq("id", existing.id);
+      return { id: existing.id };
+    }
+    const { data: row, error } = await supabaseAdmin
+      .from("vault_holdings")
+      .insert({
+        user_id: userId,
+        vault_type: data.vault_type,
+        principal: data.amount,
+        apy,
+        lock_until,
+      })
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    return row;
+  });
+
+export const vaultWithdraw = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { holding_id: string; amount: number }) =>
+    z.object({ holding_id: z.string().uuid(), amount: z.number().positive() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const userId = context.userId;
+    const { data: h } = await supabaseAdmin
+      .from("vault_holdings")
+      .select("*")
+      .eq("id", data.holding_id)
+      .maybeSingle();
+    if (!h || h.user_id !== userId) throw new Error("Not found");
+    if (Number(h.principal) < data.amount) throw new Error("Insufficient vault balance");
+    if (h.vault_type === "locked" && h.lock_until && new Date(h.lock_until) > new Date())
+      throw new Error("Vault still locked");
+
+    await supabaseAdmin
+      .from("vault_holdings")
+      .update({ principal: Number(h.principal) - data.amount })
+      .eq("id", h.id);
+    await postLedger(supabaseAdmin, {
+      user_id: userId,
+      type: "vault_withdraw",
+      amount: Math.abs(data.amount),
+      note: `Vault withdrawal`,
+    });
+    return { ok: true };
+  });
+
+// ---- Staking V2 ----
+function calcReward(principal: number, apy: number, days: number) {
+  return (principal * (apy / 100) * days) / 365;
+}
+
+export const stakeIntoPool = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { pool_id: string; amount: number; auto_compound?: boolean }) =>
+    z
+      .object({
+        pool_id: z.string().uuid(),
+        amount: z.number().positive(),
+        auto_compound: z.boolean().default(false),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const userId = context.userId;
+
+    const { data: pool } = await supabaseAdmin
+      .from("staking_pools")
+      .select("*")
+      .eq("id", data.pool_id)
+      .maybeSingle();
+    if (!pool || pool.status !== "active") throw new Error("Pool unavailable");
+    if (data.amount < Number(pool.min_stake))
+      throw new Error(`Minimum stake is ${pool.min_stake}`);
+    if (pool.max_stake && data.amount > Number(pool.max_stake))
+      throw new Error(`Maximum stake is ${pool.max_stake}`);
+    if (pool.capacity && Number(pool.capacity_used) + data.amount > Number(pool.capacity))
+      throw new Error("Pool capacity reached");
+
+    const lock = await postLedger(supabaseAdmin, {
+      user_id: userId,
+      type: "stake_v2_lock",
+      amount: -Math.abs(data.amount),
+      note: `Stake in ${pool.name}`,
+    });
+
+    const unlock_at =
+      Number(pool.lock_days) > 0
+        ? new Date(Date.now() + Number(pool.lock_days) * 86400_000).toISOString()
+        : null;
+
+    const { data: stake, error } = await supabaseAdmin
+      .from("user_stakes_v2")
+      .insert({
+        user_id: userId,
+        pool_id: pool.id,
+        principal: data.amount,
+        auto_compound: data.auto_compound && pool.auto_compound_supported,
+        unlock_at,
+        lock_tx_id: lock.tx_id,
+        status: "active",
+      })
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+
+    await supabaseAdmin
+      .from("staking_pools")
+      .update({ capacity_used: Number(pool.capacity_used) + data.amount })
+      .eq("id", pool.id);
+
+    await supabaseAdmin.from("staking_audit").insert({
+      stake_id: stake.id,
+      actor_id: userId,
+      action: "stake",
+      payload: { amount: data.amount, pool: pool.slug },
+    });
+    return stake;
+  });
+
+export const claimStakeRewards = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { stake_id: string }) =>
+    z.object({ stake_id: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const userId = context.userId;
+    const { data: stake } = await supabaseAdmin
+      .from("user_stakes_v2")
+      .select("*, staking_pools!inner(*)")
+      .eq("id", data.stake_id)
+      .maybeSingle();
+    if (!stake || stake.user_id !== userId) throw new Error("Not found");
+
+    // Compute pending rewards since last_reward_at (or started_at)
+    const since = new Date(stake.last_reward_at ?? stake.started_at).getTime();
+    const days = Math.max(0, (Date.now() - since) / 86400_000);
+    const pool = (stake as any).staking_pools;
+    const reward = calcReward(Number(stake.principal), Number(pool.apy), days);
+    if (reward <= 0.01) throw new Error("No rewards to claim yet");
+
+    const tx = await postLedger(supabaseAdmin, {
+      user_id: userId,
+      type: "staking_reward",
+      amount: reward,
+      note: `Reward from ${pool.name}`,
+    });
+
+    await supabaseAdmin.from("staking_rewards").insert({
+      stake_id: stake.id,
+      user_id: userId,
+      amount: reward,
+      period_start: new Date(since).toISOString(),
+      period_end: new Date().toISOString(),
+      posted_tx_id: tx.tx_id,
+      claimed: true,
+    });
+
+    await supabaseAdmin
+      .from("user_stakes_v2")
+      .update({
+        rewards_claimed: Number(stake.rewards_claimed) + reward,
+        last_reward_at: new Date().toISOString(),
+      })
+      .eq("id", stake.id);
+
+    return { reward };
+  });
+
+export const emergencyUnstake = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { stake_id: string }) =>
+    z.object({ stake_id: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const userId = context.userId;
+    const { data: stake } = await supabaseAdmin
+      .from("user_stakes_v2")
+      .select("*, staking_pools!inner(*)")
+      .eq("id", data.stake_id)
+      .maybeSingle();
+    if (!stake || stake.user_id !== userId) throw new Error("Not found");
+    if (stake.status !== "active") throw new Error("Not active");
+    const pool = (stake as any).staking_pools;
+    const pct = Number(pool.emergency_penalty_pct ?? 10);
+    const principal = Number(stake.principal);
+    const penalty = (principal * pct) / 100;
+    const net = principal - penalty;
+
+    const tx = await postLedger(supabaseAdmin, {
+      user_id: userId,
+      type: "stake_v2_unlock",
+      amount: net,
+      note: `Emergency unstake from ${pool.name} (penalty ${pct}%)`,
+    });
+
+    await supabaseAdmin
+      .from("user_stakes_v2")
+      .update({ status: "emergency_unstaked", unlock_tx_id: tx.tx_id })
+      .eq("id", stake.id);
+
+    await supabaseAdmin
+      .from("staking_pools")
+      .update({ capacity_used: Math.max(0, Number(pool.capacity_used) - principal) })
+      .eq("id", pool.id);
+
+    await supabaseAdmin.from("staking_audit").insert({
+      stake_id: stake.id,
+      actor_id: userId,
+      action: "emergency_unstake",
+      payload: { penalty, net },
+    });
+    return { net, penalty };
+  });
+
+export const completeStake = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { stake_id: string }) =>
+    z.object({ stake_id: z.string().uuid() }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const userId = context.userId;
+    const { data: stake } = await supabaseAdmin
+      .from("user_stakes_v2")
+      .select("*, staking_pools!inner(*)")
+      .eq("id", data.stake_id)
+      .maybeSingle();
+    if (!stake || stake.user_id !== userId) throw new Error("Not found");
+    if (stake.unlock_at && new Date(stake.unlock_at) > new Date())
+      throw new Error("Stake still locked");
+    const pool = (stake as any).staking_pools;
+    const principal = Number(stake.principal);
+    const tx = await postLedger(supabaseAdmin, {
+      user_id: userId,
+      type: "stake_v2_unlock",
+      amount: principal,
+      note: `Stake matured from ${pool.name}`,
+    });
+    await supabaseAdmin
+      .from("user_stakes_v2")
+      .update({ status: "completed", unlock_tx_id: tx.tx_id })
+      .eq("id", stake.id);
+    await supabaseAdmin
+      .from("staking_pools")
+      .update({ capacity_used: Math.max(0, Number(pool.capacity_used) - principal) })
+      .eq("id", pool.id);
+    return { ok: true };
+  });
