@@ -873,7 +873,7 @@ export const transferVst = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const senderId = context.userId;
-    if (!(await rateLimit(supabaseAdmin, senderId, "transfer", 10, 3600)))
+    await rateLimit(supabaseAdmin, senderId, "transfer", 10, 3600);
       throw new Error("Too many transfers, try again later");
 
     const code = data.recipient_code.trim().toUpperCase();
@@ -949,7 +949,7 @@ export const requestWithdrawal = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
-    if (!(await rateLimit(supabaseAdmin, userId, "withdrawal", 5, 3600)))
+    await rateLimit(supabaseAdmin, userId, "withdrawal", 5, 3600);
       throw new Error("Too many withdrawal requests");
 
     if (data.amount < 50) throw new Error("Minimum withdrawal is 50 VST");
