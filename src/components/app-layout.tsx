@@ -17,7 +17,7 @@ import {
   TrendingUp,
   Settings,
   HelpCircle,
-  ArrowUpRight,
+  Layers,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useIsAdmin } from "@/hooks/use-auth";
@@ -27,22 +27,22 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/daily", label: "Daily", icon: Sun },
-  { to: "/rewards", label: "Rewards", icon: Sparkles },
-  { to: "/vault", label: "Vault", icon: Vault },
-  { to: "/invest", label: "Invest", icon: TrendingUp },
   { to: "/wallet", label: "Wallet", icon: Wallet },
-  { to: "/withdraw", label: "Withdraw", icon: ArrowUpRight },
+  { to: "/staking", label: "Staking", icon: Layers },
+  { to: "/daily", label: "Daily Hub", icon: Sun },
+  { to: "/rewards", label: "Rewards", icon: Sparkles },
   { to: "/referrals", label: "Referrals", icon: Users },
+  { to: "/invest", label: "Investments", icon: TrendingUp },
+  { to: "/vault", label: "Smart Vault", icon: Vault },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
 const mobileNav = [
   { to: "/dashboard", label: "Home", icon: LayoutDashboard },
-  { to: "/daily", label: "Daily", icon: Sun },
-  { to: "/rewards", label: "Earn", icon: Sparkles },
   { to: "/wallet", label: "Wallet", icon: Wallet },
-  { to: "/settings", label: "Settings", icon: Settings },
+  { to: "/staking", label: "Stake", icon: Layers },
+  { to: "/rewards", label: "Earn", icon: Sparkles },
+  { to: "/settings", label: "Profile", icon: UserIcon },
 ] as const;
 
 function formatVst(n: number) {

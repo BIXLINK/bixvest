@@ -1,145 +1,160 @@
-# BIXVEST Phase 2 — Ecosystem Update
+# BIXVEST Premium Redesign Plan
 
-Moves BIXVEST from "account + staking" to a full ledger-powered participation ecosystem. Phase 1 stays intact; this layers on top.
-
-## 1. Ledger Engine (core)
-
-Every VST movement becomes a ledger entry. No direct balance writes.
-
-New DB:
-
-- Extend `wallet_transactions` with: `source` (system/user/admin/campaign/referral/task/stake/invest), `destination`, `status` (pending/confirmed/reversed), `tx_ref` (uuid). Keep existing rows compatible.
-- Add `recompute_balance(user_id)` SQL function — sum of confirmed ledger entries.
-- Server helper `ledger.post({ user_id, type, source, destination, amount, note, ref })` used by ALL reward/stake/admin code paths. Replaces ad-hoc `profiles.update({ vst_balance })` calls in `bixvest.functions.ts`.
-
-## 2. Onboarding Missions
-
-New table `onboarding_missions` (seeded): complete_profile, verify_email, explore_dashboard, first_campaign. Each user gets `user_missions` rows on activation. Completion → ledger reward.
-
-UI: "Welcome Journey" card on dashboard with progress checklist.
-
-## 3. Daily Activity Hub
-
-New tables:
-
-- `daily_claims` (user_id, claim_date, type) — uniqueness prevents double-claim.
-- `daily_streak` on profiles (current_streak, last_claim_date).
-
-New route `/daily` ("Today's Opportunities") with: Login Bonus (+50), Learning (+100), Community (+200), Featured Campaigns. Server fn `claimDaily({ type })` enforces 1×/day per type via unique index.
-
-## 4. BIX Score (reputation)
-
-Add `bix_score`, `bix_level` to profiles. Score = weighted sum of: tasks completed, daily streak, account age, referrals activated. Recomputed by trigger after ledger inserts of type `earn` / `referral` / `daily`. Displayed on profile + dashboard.
-
-## 5. Referral System Upgrade
-
-- New referral code format: `BIX-XXXXX` (migrate generator).
-- New table `referral_rewards` (referrer_id, referred_id, tier, amount, status).
-- On `activateMembership`: post ledger entry `REFERRAL_REWARD` to referrer (+500 VST configurable).
-- Referrals page shows: invited / activated / active counts + reward history.
-
-## 6. Campaign Marketplace
-
-Extend `campaigns`: `budget`, `spent`, `target_audience` (jsonb), `min_bix_score`, `start_at`, `end_at`, `created_by_business` (nullable uuid).
-New table `campaign_participations` (campaign_id, user_id, status, proof, vst_awarded).
-Admin can create; users browse `/rewards` → Campaigns tab with eligibility filter. Approval routes through ledger.
-
-## 7. Vault Update
-
-Vault page already shows 10 tiers — enhance with:
-
-- Progress bar to next tier.
-- Tier benefits list (premium campaigns, multipliers, exclusive access flags).
-- Tier gating enforced in campaign eligibility query.
-
-## 8. BIXVEST Invest (foundation)
-
-New tables:
-
-- `invest_wallet` (user_id, balance, locked) — SEPARATE from VST.
-- `invest_products` (name, description, min_amount, apr, status) — admin managed.
-- `invest_holdings` (user_id, product_id, amount, started_at, status).
-- `invest_transactions` (own ledger).
-
-New route `/invest` — placeholder UI with "Coming soon" + wallet display. Admin route `/admin/invest` to manage products. No real money flow yet.
-
-## 9. Admin Command Center
-
-Restructure `/admin` into:
-
-- **Overview** (already exists, expand): + ledger volume 24h/7d/30d, top earners, campaign ROI.
-- **Users**: existing + activity timeline, suspend, verify badge.
-- **Ledger Explorer** (NEW `/admin/ledger`): filter by user/type/date/amount, CSV export.
-- **Rewards** (NEW `/admin/rewards`): edit daily reward amounts, mission rewards, multipliers (stored in `app_config` key-value table).
-- **Campaigns** (existing, expand): budget tracking, participation review.
-- **Economy** (NEW `/admin/economy`): VST supply stats, staking level configs, rate limits.
-- **Audit Log** (NEW `/admin/audit`): every admin action recorded.
-
-## 10. Security
-
-- New `audit_log` table — written by every admin server fn via wrapper.
-- New `rate_limits` table + helper `enforceRateLimit(user_id, action, max, window)` used on daily claims, task submits, code activation.
-- Duplicate-account check: index on `profiles.email_normalized` + IP/device fingerprint column (best-effort).
-
-## 11. App Config
-
-New `app_config` (key text PK, value jsonb) seeded with: `daily_login_reward`, `daily_learning_reward`, `daily_community_reward`, `referral_reward`, `mission_rewards`, `bix_score_weights`. Admin Rewards page edits these. All reward issuers read from config.
+A scoped, **backward-compatible** redesign that turns BIXVEST into a fintech-style platform. **No data loss. No ledger replacement.** Every change extends the existing schema and reuses `post_ledger`, `wallet_transactions`, `profiles`, `stakes`, `stake_levels`, `invest_*`, `payments`, and `activation_codes`.
 
 ---
 
-## Technical sections
+## Guiding rules
 
-### DB Migrations (one migration)
-
-- ALTER `wallet_transactions` add columns; backfill `source='legacy'`.
-- ALTER `profiles` add `bix_score int`, `bix_level int`, `current_streak int`, `last_claim_date date`, `verified bool`.
-- New tables: `onboarding_missions`, `user_missions`, `daily_claims`, `referral_rewards`, `campaign_participations`, `invest_wallet`, `invest_products`, `invest_holdings`, `invest_transactions`, `audit_log`, `rate_limits`, `app_config`.
-- ALTER `campaigns` add budget/audience/score columns.
-- Functions: `recompute_balance`, `post_ledger`, `claim_daily`, `award_mission`, `update_bix_score` trigger.
-- RLS + GRANTs for every new table (authenticated read own, admin via `is_admin`, service_role full).
-- Seed onboarding missions + app_config defaults.
-
-### Server functions (`src/lib/bixvest.functions.ts` + new `src/lib/ledger.functions.ts`)
-
-- `postLedger` (internal helper, not exported as fn).
-- Refactor `activateMembership`, `stakeVst`, `adminAdjustVst`, `reviewSubmission`, `submitTask` to use `postLedger`.
-- New: `claimDaily`, `completeMission`, `getDailyStatus`, `getBixScore`, `getReferralStats`, `participateInCampaign`, `getLedgerPage` (admin), `setAppConfig` (admin), `getAuditLog` (admin), `createInvestProduct` (admin), `getInvestWallet`.
-- Every admin fn wrapped with `logAdminAction(actor, action, target, payload)`.
-
-### New routes
-
-- `src/routes/_authenticated/daily.tsx` — Daily Hub.
-- `src/routes/_authenticated/invest.tsx` — Invest landing.
-- `src/routes/_authenticated/admin/ledger.tsx`
-- `src/routes/_authenticated/admin/rewards.tsx`
-- `src/routes/_authenticated/admin/economy.tsx`
-- `src/routes/_authenticated/admin/audit.tsx`
-- `src/routes/_authenticated/admin/invest.tsx`
-
-### UI updates
-
-- Dashboard: Welcome Journey card (if pending missions), BIX Score widget, daily streak indicator, CTA to `/daily`.
-- App layout: add Daily + Invest to nav (mobile bottom tabs become scrollable or grouped).
-- Admin layout: add Ledger/Rewards/Economy/Audit/Invest tabs.
-- Profile: BIX Score breakdown, verified badge.
-
-### Out of scope (saved for "Economy Engine" phase)
-
-- Treasury model & VST supply rules.
-- Real investment money flow / KYC.
-- Business self-serve campaign onboarding (admin-only for now).
-- Fraud ML detection (only basic rate limits + dup checks here).
+- Existing tables, RLS, GRANTs, roles, and server functions stay intact.
+- All money movements continue to go through `post_ledger` (single source of truth).
+- New tables are additive only — no destructive migrations.
+- Existing routes keep working during the transition; new routes added alongside, old ones redirected when replaced.
+- Theme + animation system already shipped — reused, not rebuilt.
 
 ---
 
-## Build order
+## 1. Navigation & shell
 
-1. Migration (schema + functions + seeds + RLS).
-2. Ledger helper + refactor existing fns.
-3. Daily Hub + missions + BIX score.
-4. Referral upgrade + campaign marketplace expansion.
-5. Invest module skeleton.
-6. Admin Command Center (Ledger Explorer → Rewards → Economy → Audit → Invest).
-7. Dashboard + nav polish + rate limits + audit wrapper.
+Update `src/components/app-layout.tsx`:
 
-This is a multi-step build. I'll execute it in sequence with the migration as the first approval gate.
+- Top-level: **Dashboard · Wallet · Staking · Rewards · Referrals · Profile**
+- Wallet becomes a **section** with sub-tabs: Overview · Deposit · Withdraw · Transfer · Smart Vault · Investments · History
+- Staking sub-tabs: Overview · Pools · Active Stakes · Rewards · Analytics · History
+- Mobile: bottom nav (Dashboard / Wallet / Stake / Rewards / Profile) + drawer
+- Desktop: persistent sidebar with grouped sections
+
+---
+
+## 2. Wallet hub (`/wallet`)
+
+Rebuild `src/routes/_authenticated/wallet.tsx` as a tabbed hub:
+
+- **Overview** — animated balance cards:
+  - Available, Locked, Vault, Investment, Total Staked, Pending W/D, Pending Deposits, Total Earnings, Today's Earnings
+  - All values computed from `profiles` + aggregations on `wallet_transactions`, `stakes`, `invest_holdings`, new `vault_holdings`, `withdrawals` tables
+  - Quick actions: Deposit · Withdraw · Transfer · Vault · Invest
+  - Recent transactions (last 10) with rich rows (type, amount, status, date, time, network, ref id)
+- **Deposit** (`/wallet/deposit`) — reuses activation/payment flow; shows pending payments
+- **Withdraw** (`/wallet/withdraw`) — replaces standalone `/withdraw` route, real submission to new `withdrawals` table
+- **Transfer** (`/wallet/transfer`) — peer-to-peer VST via `post_ledger` (debit sender, credit recipient atomically in a new `transfer_vst` server fn)
+- **Smart Vault** (`/wallet/vault`) — moved under wallet
+- **Investments** (`/wallet/invest`) — moved under wallet (reuses existing `invest_*` tables)
+- **History** (`/wallet/history`) — full filterable ledger view (existing logic moved here)
+
+Old `/vault`, `/invest`, `/withdraw` routes → redirect to new paths.
+
+---
+
+## 3. Smart Vault
+
+Currently `/vault` exists but is thin. Extend with:
+
+New tables (additive):
+- `vault_holdings` (user_id, type: flexible|locked, principal, interest_accrued, apy, lock_until, goal_name, goal_target, auto_save_amount, auto_save_frequency)
+- `vault_transactions` is **not** new — reuse `wallet_transactions` with `type='vault_deposit'|'vault_withdraw'|'vault_interest'` (add enum values).
+
+Features:
+- Deposit / Withdraw / Auto-Save toggle / Savings Goals / Lock period selection
+- Daily interest accrual via scheduled server fn (`accrueVaultInterest`)
+- Dashboard: Vault Balance, Interest Earned, Locked, Available, Projected Interest (line chart)
+
+---
+
+## 4. Investments
+
+Existing `invest_products`, `invest_holdings`, `invest_transactions`, `invest_wallet` stay. Add:
+
+- Portfolio header: Total Value, Active, Completed, Pending, Total Profit, Unrealized Profit
+- Per-investment cards with progress bar to maturity, ROI %, status badges, actions: View · Reinvest · Withdraw Profit
+- Detail drawer with full timeline
+
+---
+
+## 5. Withdrawals (new module)
+
+New tables:
+- `withdrawal_methods` (user_id, type: bank|crypto|internal, label, details jsonb, verified, created_at)
+- `withdrawals` (user_id, source: main|vault|invest, amount, fee, net_amount, method_id, status: pending|approved|processing|completed|rejected, reference, admin_note, created_at, processed_at)
+
+Flow: Source → Amount → Destination → Review → Submit → Pending → Admin approval → Completed. Locks VST via `post_ledger` (`stake_lock`-style) on submit, releases on rejection, debits permanently on completion. Admin queue under `/admin/withdrawals`.
+
+---
+
+## 6. Staking redesign
+
+New tables (additive — keeps existing `stakes` & `stake_levels`):
+- `staking_pools` (id, name, slug, apy, min_stake, max_stake, lock_days, reward_frequency: daily|weekly|monthly|on_maturity, capacity, capacity_used, status: active|paused|closed, risk_level, auto_compound_supported, vip_only)
+- `user_stakes_v2` (pool_id, user_id, principal, rewards_accrued, rewards_claimed, auto_compound, started_at, unlock_at, last_reward_at, status: pending|active|rewarding|claimable|matured|completed|emergency_unstaked|cancelled)
+- `staking_rewards` (stake_id, user_id, amount, period_start, period_end, posted_tx_id)
+- `staking_audit` (stake_id, actor_id, action, payload jsonb)
+
+Existing `stakes` table is **kept intact** and read-only for legacy display; new stakes go into `user_stakes_v2`. Migration seeds 6 default pools (Flexible, 30d, 90d, 180d, 365d, VIP).
+
+Pages:
+- `/staking` Overview — Total Staked, Est. APY (weighted), Rewards Earned, Pending Rewards, Next Reward Time, Active Pools, Portfolio Allocation donut
+- `/staking/pools` — pool grid w/ capacity bars, APY, lock, status
+- `/staking/active` — active stake cards w/ progress, claim/restake/emergency unstake
+- `/staking/rewards` — claimable rewards list
+- `/staking/analytics` — charts (Recharts): Reward Growth, Stake Growth, Portfolio Allocation, APY History, Monthly Earnings, Reward Timeline
+- `/staking/history` — full history
+
+Server fns:
+- `stakeIntoPool({pool_id, amount, auto_compound})` — validates, locks via `post_ledger('stake', -amount)`, inserts `user_stakes_v2`
+- `accrueStakingRewards()` — cron-friendly, posts rewards via `post_ledger('earn', +reward)` and writes `staking_rewards`
+- `claimRewards({stake_id})`
+- `restake({stake_id})`
+- `emergencyUnstake({stake_id})` — applies penalty %, posts net via `post_ledger`
+- Live reward simulator (pure client calc) on stake form
+
+---
+
+## 7. Admin extensions
+
+Add admin pages:
+- `/admin/withdrawals` — review queue, approve/reject
+- `/admin/vault` — vault stats, interest rate config
+- `/admin/pools` — manage `staking_pools` (APY, capacity, status, visibility)
+- `/admin/staking-requests` — emergency unstake approvals
+- Extend `/admin/economy` with pool defaults & vault APY config keys in `app_config`
+
+All admin actions logged via existing `log_audit`.
+
+---
+
+## 8. UI/UX polish
+
+- Reuse existing tokens in `src/styles.css`; add glassmorphism utility (`.glass-card`) and animated counters component (`<AnimatedNumber />`)
+- Recharts for analytics
+- Skeleton loaders (`Skeleton` from shadcn) on every async section
+- Empty states with CTAs
+- Toasts via existing sonner
+- Light/dark already shipped — verify new components in both
+
+---
+
+## 9. Migration order (multiple steps, each backward compatible)
+
+1. Add enum values (`vault_deposit`, `vault_withdraw`, `vault_interest`, `transfer_in`, `transfer_out`, `withdrawal`, `staking_reward_v2`)
+2. Create `vault_holdings`, `withdrawal_methods`, `withdrawals`, `staking_pools`, `user_stakes_v2`, `staking_rewards`, `staking_audit` with GRANTs + RLS
+3. Seed 6 default pools, vault APY config
+4. Server fns: transfer, withdrawals, vault, staking pools
+5. Frontend: new wallet hub + sub-routes
+6. Frontend: new staking module + analytics
+7. Admin: new queues
+8. Redirect old routes (`/vault`, `/invest`, `/withdraw`) to new paths
+
+---
+
+## Out of scope (future)
+
+Governance, launchpads, liquidity pools, lending, multi-asset — schema designed to extend (pools by `asset` column reserved), but not built now.
+
+---
+
+## Confirmations needed
+
+1. **Big build** — estimate 8–12 migration + code passes across multiple turns. OK to proceed step-by-step, shipping each phase as it lands?
+2. **Legacy `stakes` table** — keep read-only for old records, all new staking goes to `user_stakes_v2`. OK?
+3. **Withdrawals** — approval is manual admin (no payout rails wired). OK?
+4. **Transfers** — peer VST transfers by `@referral_code` lookup. OK or restrict?

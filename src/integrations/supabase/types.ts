@@ -683,6 +683,148 @@ export type Database = {
           },
         ]
       }
+      staking_audit: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          payload: Json | null
+          stake_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          stake_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          stake_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staking_audit_stake_id_fkey"
+            columns: ["stake_id"]
+            isOneToOne: false
+            referencedRelation: "user_stakes_v2"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staking_pools: {
+        Row: {
+          apy: number
+          auto_compound_supported: boolean
+          capacity: number | null
+          capacity_used: number
+          created_at: string
+          description: string | null
+          emergency_penalty_pct: number
+          id: string
+          lock_days: number
+          max_stake: number | null
+          min_stake: number
+          name: string
+          reward_frequency: string
+          risk_level: string
+          slug: string
+          status: string
+          updated_at: string
+          vip_only: boolean
+        }
+        Insert: {
+          apy: number
+          auto_compound_supported?: boolean
+          capacity?: number | null
+          capacity_used?: number
+          created_at?: string
+          description?: string | null
+          emergency_penalty_pct?: number
+          id?: string
+          lock_days?: number
+          max_stake?: number | null
+          min_stake?: number
+          name: string
+          reward_frequency?: string
+          risk_level?: string
+          slug: string
+          status?: string
+          updated_at?: string
+          vip_only?: boolean
+        }
+        Update: {
+          apy?: number
+          auto_compound_supported?: boolean
+          capacity?: number | null
+          capacity_used?: number
+          created_at?: string
+          description?: string | null
+          emergency_penalty_pct?: number
+          id?: string
+          lock_days?: number
+          max_stake?: number | null
+          min_stake?: number
+          name?: string
+          reward_frequency?: string
+          risk_level?: string
+          slug?: string
+          status?: string
+          updated_at?: string
+          vip_only?: boolean
+        }
+        Relationships: []
+      }
+      staking_rewards: {
+        Row: {
+          amount: number
+          claimed: boolean
+          created_at: string
+          id: string
+          period_end: string
+          period_start: string
+          posted_tx_id: string | null
+          stake_id: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          claimed?: boolean
+          created_at?: string
+          id?: string
+          period_end: string
+          period_start: string
+          posted_tx_id?: string | null
+          stake_id: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          claimed?: boolean
+          created_at?: string
+          id?: string
+          period_end?: string
+          period_start?: string
+          posted_tx_id?: string | null
+          stake_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staking_rewards_stake_id_fkey"
+            columns: ["stake_id"]
+            isOneToOne: false
+            referencedRelation: "user_stakes_v2"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_submissions: {
         Row: {
           campaign_id: string | null
@@ -835,6 +977,119 @@ export type Database = {
         }
         Relationships: []
       }
+      user_stakes_v2: {
+        Row: {
+          auto_compound: boolean
+          created_at: string
+          id: string
+          last_reward_at: string | null
+          lock_tx_id: string | null
+          pool_id: string
+          principal: number
+          rewards_accrued: number
+          rewards_claimed: number
+          started_at: string
+          status: string
+          unlock_at: string | null
+          unlock_tx_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          auto_compound?: boolean
+          created_at?: string
+          id?: string
+          last_reward_at?: string | null
+          lock_tx_id?: string | null
+          pool_id: string
+          principal: number
+          rewards_accrued?: number
+          rewards_claimed?: number
+          started_at?: string
+          status?: string
+          unlock_at?: string | null
+          unlock_tx_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          auto_compound?: boolean
+          created_at?: string
+          id?: string
+          last_reward_at?: string | null
+          lock_tx_id?: string | null
+          pool_id?: string
+          principal?: number
+          rewards_accrued?: number
+          rewards_claimed?: number
+          started_at?: string
+          status?: string
+          unlock_at?: string | null
+          unlock_tx_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_stakes_v2_pool_id_fkey"
+            columns: ["pool_id"]
+            isOneToOne: false
+            referencedRelation: "staking_pools"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vault_holdings: {
+        Row: {
+          apy: number
+          auto_save_amount: number | null
+          auto_save_frequency: string | null
+          created_at: string
+          goal_name: string | null
+          goal_target: number | null
+          id: string
+          interest_accrued: number
+          lock_until: string | null
+          principal: number
+          status: string
+          updated_at: string
+          user_id: string
+          vault_type: string
+        }
+        Insert: {
+          apy?: number
+          auto_save_amount?: number | null
+          auto_save_frequency?: string | null
+          created_at?: string
+          goal_name?: string | null
+          goal_target?: number | null
+          id?: string
+          interest_accrued?: number
+          lock_until?: string | null
+          principal?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+          vault_type?: string
+        }
+        Update: {
+          apy?: number
+          auto_save_amount?: number | null
+          auto_save_frequency?: string | null
+          created_at?: string
+          goal_name?: string | null
+          goal_target?: number | null
+          id?: string
+          interest_accrued?: number
+          lock_until?: string | null
+          principal?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+          vault_type?: string
+        }
+        Relationships: []
+      }
       wallet_transactions: {
         Row: {
           amount: number
@@ -882,6 +1137,95 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      withdrawal_methods: {
+        Row: {
+          created_at: string
+          details: Json
+          id: string
+          label: string
+          method_type: string
+          user_id: string
+          verified: boolean
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          id?: string
+          label: string
+          method_type: string
+          user_id: string
+          verified?: boolean
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          id?: string
+          label?: string
+          method_type?: string
+          user_id?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      withdrawals: {
+        Row: {
+          admin_note: string | null
+          amount: number
+          created_at: string
+          fee: number
+          id: string
+          lock_tx_id: string | null
+          method_id: string | null
+          net_amount: number
+          processed_at: string | null
+          reference: string | null
+          settle_tx_id: string | null
+          source: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          amount: number
+          created_at?: string
+          fee?: number
+          id?: string
+          lock_tx_id?: string | null
+          method_id?: string | null
+          net_amount: number
+          processed_at?: string | null
+          reference?: string | null
+          settle_tx_id?: string | null
+          source?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          amount?: number
+          created_at?: string
+          fee?: number
+          id?: string
+          lock_tx_id?: string | null
+          method_id?: string | null
+          net_amount?: number
+          processed_at?: string | null
+          reference?: string | null
+          settle_tx_id?: string | null
+          source?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdrawals_method_id_fkey"
+            columns: ["method_id"]
+            isOneToOne: false
+            referencedRelation: "withdrawal_methods"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -953,6 +1297,16 @@ export type Database = {
         | "mission"
         | "campaign"
         | "activation_payment"
+        | "vault_deposit"
+        | "vault_withdraw"
+        | "vault_interest"
+        | "transfer_in"
+        | "transfer_out"
+        | "withdrawal"
+        | "staking_reward"
+        | "stake_v2_lock"
+        | "stake_v2_unlock"
+        | "stake_v2_penalty"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1098,6 +1452,16 @@ export const Constants = {
         "mission",
         "campaign",
         "activation_payment",
+        "vault_deposit",
+        "vault_withdraw",
+        "vault_interest",
+        "transfer_in",
+        "transfer_out",
+        "withdrawal",
+        "staking_reward",
+        "stake_v2_lock",
+        "stake_v2_unlock",
+        "stake_v2_penalty",
       ],
     },
   },
