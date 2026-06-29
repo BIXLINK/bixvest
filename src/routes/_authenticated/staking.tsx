@@ -24,8 +24,8 @@ import {
 export const Route = createFileRoute("/_authenticated/staking")({
   head: () => ({
     meta: [
-      { title: "Staking — BIXVEST" },
-      { name: "description", content: "Premium staking pools with daily, weekly and monthly rewards on BIXVEST." },
+      { title: "Smart Vault — BIXVEST" },
+      { name: "description", content: "Smart Vault pools with daily, weekly and monthly rewards on BIXVEST." },
     ],
   }),
   beforeLoad: requireActiveOrAdmin,
@@ -88,7 +88,7 @@ function StakingHub() {
       <div className="mx-auto max-w-7xl space-y-6">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <h1 className="font-display text-3xl font-bold">Staking</h1>
+            <h1 className="font-display text-3xl font-bold">Smart Vault</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Stake VST into flexible or locked pools. Rewards stream daily and are fully ledger-tracked.
             </p>

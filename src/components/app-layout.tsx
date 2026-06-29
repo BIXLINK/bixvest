@@ -17,7 +17,6 @@ import {
   TrendingUp,
   Settings,
   HelpCircle,
-  Layers,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useProfile, useIsAdmin } from "@/hooks/use-auth";
@@ -29,19 +28,18 @@ import { BrandLogo } from "@/components/brand-logo";
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/wallet", label: "Wallet", icon: Wallet },
-  { to: "/staking", label: "Staking", icon: Layers },
+  { to: "/staking", label: "Smart Vault", icon: Vault },
   { to: "/daily", label: "Daily Hub", icon: Sun },
   { to: "/rewards", label: "Rewards", icon: Sparkles },
   { to: "/referrals", label: "Referrals", icon: Users },
   { to: "/invest", label: "Investments", icon: TrendingUp },
-  { to: "/vault", label: "Smart Vault", icon: Vault },
   { to: "/settings", label: "Settings", icon: Settings },
 ] as const;
 
 const mobileNav = [
   { to: "/dashboard", label: "Home", icon: LayoutDashboard },
   { to: "/wallet", label: "Wallet", icon: Wallet },
-  { to: "/staking", label: "Stake", icon: Layers },
+  { to: "/staking", label: "Vault", icon: Vault },
   { to: "/rewards", label: "Earn", icon: Sparkles },
   { to: "/settings", label: "Profile", icon: UserIcon },
 ] as const;

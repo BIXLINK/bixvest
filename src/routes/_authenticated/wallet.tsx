@@ -20,7 +20,6 @@ import {
   ArrowUpFromLine,
   Vault as VaultIcon,
   Sparkles,
-  Layers,
   Clock,
   CheckCircle2,
   XCircle,
@@ -164,7 +163,6 @@ function WalletHub() {
 
           <TabsContent value="assets" className="mt-6">
             <AssetsPanel
-              vaultBal={totals.vaultBal}
               investBal={totals.investBal}
               stakedV2={totals.stakedV2}
             />
@@ -183,7 +181,7 @@ function Overview({ profile, totals, tx, pendingW }: any) {
   const cards = [
     { label: "Available", value: Number(profile?.vst_balance ?? 0), icon: WalletIcon, accent: "text-primary" },
     { label: "Locked / Staked", value: Number(profile?.vst_locked ?? 0) + totals.stakedV2, icon: Lock, accent: "text-amber-500" },
-    { label: "Smart Vault", value: totals.vaultBal, icon: VaultIcon, accent: "text-emerald-500" },
+    { label: "Smart Vault", value: totals.stakedV2, icon: VaultIcon, accent: "text-emerald-500" },
     { label: "Investments", value: totals.investBal, icon: TrendingUp, accent: "text-blue-500" },
     { label: "Total Earned", value: totals.earned, icon: TrendingUp, accent: "text-success" },
     { label: "Today's Earnings", value: totals.todayEarn, icon: Sparkles, accent: "text-success" },
@@ -195,9 +193,8 @@ function Overview({ profile, totals, tx, pendingW }: any) {
     { to: "/wallet" as const, label: "Deposit", icon: ArrowDownToLine, tab: "deposit" },
     { to: "/wallet" as const, label: "Withdraw", icon: ArrowUpFromLine, tab: "withdraw" },
     { to: "/wallet" as const, label: "Transfer", icon: Send, tab: "transfer" },
-    { to: "/vault" as const, label: "Vault", icon: VaultIcon },
+    { to: "/staking" as const, label: "Smart Vault", icon: VaultIcon },
     { to: "/invest" as const, label: "Invest", icon: TrendingUp },
-    { to: "/staking" as const, label: "Stake", icon: Layers },
   ];
 
   return (
@@ -567,12 +564,11 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
-function AssetsPanel({ vaultBal, investBal, stakedV2 }: any) {
+function AssetsPanel({ investBal, stakedV2 }: any) {
   return (
     <div className="grid gap-4 sm:grid-cols-3">
-      <AssetCard title="Smart Vault" value={vaultBal} to="/vault" icon={VaultIcon} />
+      <AssetCard title="Smart Vault" value={stakedV2} to="/staking" icon={VaultIcon} />
       <AssetCard title="Investments" value={investBal} to="/invest" icon={TrendingUp} />
-      <AssetCard title="Staking" value={stakedV2} to="/staking" icon={Layers} />
     </div>
   );
 }
