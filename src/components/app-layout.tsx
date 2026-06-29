@@ -24,6 +24,7 @@ import { useProfile, useIsAdmin } from "@/hooks/use-auth";
 import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/brand-logo";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -66,7 +67,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
     <div className="flex h-full flex-col bg-sidebar text-sidebar-foreground">
       <div className="px-6 py-6">
         <Link to="/dashboard" className="flex items-center gap-2">
-          <img src="/bixvestlogo.png" alt="BIXVEST" className="h-8 w-8 rounded-lg" />
+          <BrandLogo />
           <div>
             <div className="font-display text-lg font-bold tracking-tight">BIXVEST</div>
             <div className="text-[10px] uppercase tracking-[0.18em] text-sidebar-foreground/60">

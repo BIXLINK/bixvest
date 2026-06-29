@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 
 const searchSchema = z.object({
   redirect: z.string().optional(),
@@ -52,7 +53,7 @@ function AuthPage() {
     <div className="grid min-h-screen lg:grid-cols-2">
       <div className="relative hidden bg-hero text-white lg:flex lg:flex-col lg:justify-between lg:p-12">
         <Link to="/" className="flex items-center gap-2">
-          <img src="/bixvestlogo.png" alt="BIXVEST" className="h-8 w-8 rounded-lg" />
+          <BrandLogo />
           <div className="font-display text-lg font-bold">BIXVEST</div>
         </Link>
         <div>
@@ -74,7 +75,7 @@ function AuthPage() {
         <div className="w-full max-w-md">
           <div className="mb-8 lg:hidden">
             <Link to="/" className="flex items-center gap-2">
-              <img src="/bixvestlogo.png" alt="BIXVEST" className="h-8 w-8 rounded-lg" />
+              <BrandLogo />
               <div className="font-display text-lg font-bold">BIXVEST</div>
             </Link>
           </div>

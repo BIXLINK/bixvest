@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import { bixvestLogoUrl } from "@/lib/brand-assets";
 
 function NotFoundComponent() {
   return (
@@ -98,7 +99,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
               "@type": "Organization",
               name: "BIXVEST",
               url: "https://bixvest.lovable.app",
-              logo: "https://bixvest.lovable.app/favicon.ico",
+              logo: `https://bixvest.lovable.app${bixvestLogoUrl}`,
               parentOrganization: { "@type": "Organization", name: "Bixvest Holdings" },
             },
             {
