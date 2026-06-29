@@ -19,7 +19,7 @@ export default function PrivacyPage() {
       <header className="sticky top-0 z-30 border-b border-border bg-white/80 backdrop-blur dark:bg-[--color-black-solid]/80">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 lg:px-8">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/bixvest logo.png" alt="BIXVEST" className="h-8 w-8 rounded-lg" />
+            <img src="/bixvestlogo.png" alt="BIXVEST" className="h-8 w-8 rounded-lg" />
             <div className="font-display text-lg font-bold tracking-tight text-[--color-black-solid] dark:text-white">
               BIXVEST
             </div>
