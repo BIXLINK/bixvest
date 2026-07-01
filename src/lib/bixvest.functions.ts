@@ -131,42 +131,63 @@ export const activateMembership = createServerFn({ method: "POST" })
       );
     }
 
-    // Referral reward
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("referred_by")
-      .eq("id", userId)
-      .maybeSingle();
-    if (profile?.referred_by) {
-      const { data: cfg } = await supabaseAdmin
-        .from("app_config")
-        .select("value")
-        .eq("key", "referral_reward")
+    // === 3-TIER REFERRAL REWARDS ===
+    // Walk up to 3 ancestors and pay tier1 / tier2 / tier3 payouts.
+    const { data: cfgRows } = await supabaseAdmin
+      .from("app_config")
+      .select("key, value")
+      .in("key", [
+        "referral_reward_tier1",
+        "referral_reward_tier2",
+        "referral_reward_tier3",
+        "referral_reward",
+      ]);
+    const cfg = Object.fromEntries((cfgRows ?? []).map((r: any) => [r.key, Number(r.value)]));
+    const tierAmounts = [
+      cfg.referral_reward_tier1 ?? cfg.referral_reward ?? 500,
+      cfg.referral_reward_tier2 ?? 100,
+      cfg.referral_reward_tier3 ?? 50,
+    ];
+
+    let currentId: string | null = userId;
+    for (let tier = 1; tier <= 3; tier++) {
+      const { data: p } = await supabaseAdmin
+        .from("profiles")
+        .select("referred_by")
+        .eq("id", currentId)
         .maybeSingle();
-      const amount = Number(cfg?.value ?? 500);
-      const { data: existing } = await supabaseAdmin
-        .from("referral_rewards")
-        .select("id")
-        .eq("referrer_id", profile.referred_by)
-        .eq("referred_id", userId)
-        .maybeSingle();
-      if (!existing) {
-        await supabaseAdmin.from("referral_rewards").insert({
-          referrer_id: profile.referred_by,
-          referred_id: userId,
-          amount,
-          status: "paid",
-        });
-        await postLedger(supabaseAdmin, {
-          user_id: profile.referred_by,
-          type: "referral",
-          amount,
-          source: "system",
-          destination: "user",
-          note: "Referral activation reward",
-        });
-        await recomputeBix(supabaseAdmin, profile.referred_by);
+      const upstreamId = p?.referred_by as string | null | undefined;
+      if (!upstreamId) break;
+
+      const amount = tierAmounts[tier - 1];
+      if (amount > 0) {
+        const { data: existing } = await supabaseAdmin
+          .from("referral_rewards")
+          .select("id")
+          .eq("referrer_id", upstreamId)
+          .eq("referred_id", userId)
+          .eq("tier", tier)
+          .maybeSingle();
+        if (!existing) {
+          await supabaseAdmin.from("referral_rewards").insert({
+            referrer_id: upstreamId,
+            referred_id: userId,
+            amount,
+            tier,
+            status: "paid",
+          });
+          await postLedger(supabaseAdmin, {
+            user_id: upstreamId,
+            type: "referral",
+            amount,
+            source: "system",
+            destination: "user",
+            note: `Referral tier ${tier} reward`,
+          });
+          await recomputeBix(supabaseAdmin, upstreamId);
+        }
       }
+      currentId = upstreamId;
     }
 
     return { ok: true };
