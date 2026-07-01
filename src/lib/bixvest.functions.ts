@@ -1186,6 +1186,14 @@ export const stakeIntoPool = createServerFn({ method: "POST" })
       .eq("id", data.pool_id)
       .maybeSingle();
     if (!pool || pool.status !== "active") throw new Error("Pool unavailable");
+    if (pool.vip_only) {
+      const { data: prof } = await supabaseAdmin
+        .from("profiles")
+        .select("is_vip")
+        .eq("id", userId)
+        .maybeSingle();
+      if (!prof?.is_vip) throw new Error("This pool is VIP-only.");
+    }
     if (data.amount < Number(pool.min_stake))
       throw new Error(`Minimum stake is ${pool.min_stake}`);
     if (pool.max_stake && data.amount > Number(pool.max_stake))
