@@ -496,6 +496,7 @@ export type Database = {
           email_normalized: string | null
           full_name: string
           id: string
+          is_vip: boolean
           last_claim_date: string | null
           membership_status: Database["public"]["Enums"]["membership_status"]
           referral_code: string
@@ -516,6 +517,7 @@ export type Database = {
           email_normalized?: string | null
           full_name?: string
           id: string
+          is_vip?: boolean
           last_claim_date?: string | null
           membership_status?: Database["public"]["Enums"]["membership_status"]
           referral_code: string
@@ -536,6 +538,7 @@ export type Database = {
           email_normalized?: string | null
           full_name?: string
           id?: string
+          is_vip?: boolean
           last_claim_date?: string | null
           membership_status?: Database["public"]["Enums"]["membership_status"]
           referral_code?: string
@@ -584,6 +587,7 @@ export type Database = {
           referred_id: string
           referrer_id: string
           status: string
+          tier: number
         }
         Insert: {
           amount: number
@@ -592,6 +596,7 @@ export type Database = {
           referred_id: string
           referrer_id: string
           status?: string
+          tier?: number
         }
         Update: {
           amount?: number
@@ -600,6 +605,7 @@ export type Database = {
           referred_id?: string
           referrer_id?: string
           status?: string
+          tier?: number
         }
         Relationships: []
       }
