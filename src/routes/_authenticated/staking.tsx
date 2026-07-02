@@ -95,7 +95,7 @@ function StakingHub() {
           </div>
         </header>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-children">
           <Stat label="Total Staked" value={`${fmt(totals.totalStaked)} VST`} icon={Layers} />
           <Stat label="Estimated APY" value={`${fmt(totals.avgApy)}%`} icon={TrendingUp} />
           <Stat label="Rewards Earned" value={`${fmt(totals.rewardsEarned)} VST`} icon={Sparkles} />
@@ -133,12 +133,14 @@ function StakingHub() {
 
 function Stat({ label, value, icon: Icon }: any) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
+    <div className="rounded-xl border border-border bg-card p-5 transition hover-lift hover:border-primary/40">
       <div className="flex items-center justify-between">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">{label}</div>
+        <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          {label}
+        </div>
         <Icon className="h-4 w-4 text-primary" />
       </div>
-      <div className="mt-3 font-display text-2xl font-bold">{value}</div>
+      <div className="mt-3 font-display text-2xl font-bold tracking-tight">{value}</div>
     </div>
   );
 }
@@ -146,8 +148,12 @@ function Stat({ label, value, icon: Icon }: any) {
 function PoolGrid({ pools, balance }: { pools: any[]; balance: number }) {
   if (pools.length === 0)
     return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-        No pools available right now.
+      <div className="rounded-2xl border border-dashed border-border bg-card p-12 text-center">
+        <Layers className="mx-auto h-8 w-8 text-muted-foreground/60" />
+        <div className="mt-3 font-display text-base font-semibold">No pools available</div>
+        <div className="mt-1 text-sm text-muted-foreground">
+          New Smart Vault pools will appear here as they open.
+        </div>
       </div>
     );
   return (
@@ -285,8 +291,12 @@ function PoolCard({ pool, balance }: { pool: any; balance: number }) {
 function ActiveStakes({ stakes }: { stakes: any[] }) {
   if (stakes.length === 0)
     return (
-      <div className="rounded-xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
-        You don't have any active stakes yet. Choose a pool to get started.
+      <div className="rounded-2xl border border-dashed border-border bg-card p-12 text-center">
+        <Sparkles className="mx-auto h-8 w-8 text-muted-foreground/60" />
+        <div className="mt-3 font-display text-base font-semibold">No active vaults yet</div>
+        <div className="mt-1 text-sm text-muted-foreground">
+          Pick a pool above to start earning daily rewards.
+        </div>
       </div>
     );
   return (
