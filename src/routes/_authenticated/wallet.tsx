@@ -199,36 +199,48 @@ function Overview({ profile, totals, tx, pendingW }: any) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-transparent bg-gradient-card p-6 text-white shadow-elegant">
-        <div className="text-xs uppercase tracking-[0.18em] text-white/60">VST Balance</div>
-        <div className="mt-2 font-display text-5xl font-bold">{fmt(Number(profile?.vst_balance ?? 0))}</div>
-        <div className="mt-1 text-sm text-white/60">VST · BIX Score {profile?.bix_score ?? 0}</div>
+      <div className="relative overflow-hidden rounded-2xl border border-transparent bg-hero p-6 text-white shadow-elegant sm:p-8">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-primary/30 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-10 h-56 w-56 rounded-full bg-accent/20 blur-3xl" />
+        <div className="relative">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/60">
+            VST Balance
+          </div>
+          <div className="mt-2 font-display text-4xl font-bold tracking-tight sm:text-5xl">
+            {fmt(Number(profile?.vst_balance ?? 0))}
+          </div>
+          <div className="mt-1 text-sm text-white/60">
+            VST · BIX Score {profile?.bix_score ?? 0}
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 stagger-children">
         {quick.map((q) => (
           <Link
             key={q.label}
             to={q.to}
-            className="group rounded-xl border border-border bg-card p-4 transition hover:border-primary hover:shadow-elegant"
+            className="group rounded-xl border border-border bg-card p-4 transition hover-lift hover:border-primary/60"
           >
-            <q.icon className="h-5 w-5 text-primary" />
+            <q.icon className="h-5 w-5 text-primary transition-transform group-hover:scale-110" />
             <div className="mt-3 text-sm font-medium">{q.label}</div>
           </Link>
         ))}
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-children">
         {cards.map((c) => (
           <div
             key={c.label}
-            className="rounded-xl border border-border bg-card p-5 transition hover:border-primary/40"
+            className="rounded-xl border border-border bg-card p-5 transition hover-lift hover:border-primary/40"
           >
             <div className="flex items-center justify-between">
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">{c.label}</div>
+              <div className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                {c.label}
+              </div>
               <c.icon className={`h-4 w-4 ${c.accent}`} />
             </div>
-            <div className="mt-3 font-display text-2xl font-bold">{fmt(c.value)}</div>
+            <div className="mt-3 font-display text-2xl font-bold tracking-tight">{fmt(c.value)}</div>
             <div className="mt-1 text-[10px] uppercase tracking-wider text-muted-foreground">VST</div>
           </div>
         ))}

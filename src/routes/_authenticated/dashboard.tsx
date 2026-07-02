@@ -134,7 +134,7 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 stagger-children">
           <StatCard label="VST Balance" value={fmt(profile?.vst_balance)} icon={WalletIcon} hero />
           <StatCard label="BIX Score" value={`${bix} · L${bixLevel}`} icon={Award} />
           <StatCard label="Streak" value={`${streak} days`} icon={Sun} />
@@ -204,8 +204,8 @@ function Dashboard() {
                   {nextLevel.name} — {fmt(nextLevel.vst_required)} VST
                 </div>
               </div>
-              <Link to="/vault" className="text-sm text-primary hover:underline">
-                Go to Vault <ArrowRight className="ml-1 inline h-3 w-3" />
+              <Link to="/staking" className="text-sm text-primary hover:underline">
+                Go to Smart Vault <ArrowRight className="ml-1 inline h-3 w-3" />
               </Link>
             </div>
             <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
@@ -289,17 +289,20 @@ function StatCard({
 }) {
   return (
     <div
-      className={`rounded-xl border p-5 ${hero ? "border-transparent bg-gradient-card text-white shadow-elegant" : "border-border bg-card"}`}
+      className={`relative overflow-hidden rounded-xl border p-5 hover-lift ${hero ? "border-transparent bg-hero text-white shadow-elegant" : "border-border bg-card"}`}
     >
-      <div className="flex items-center justify-between">
+      {hero && (
+        <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-primary/30 blur-3xl" />
+      )}
+      <div className="relative flex items-center justify-between">
         <div
-          className={`text-xs uppercase tracking-wider ${hero ? "text-white/60" : "text-muted-foreground"}`}
+          className={`text-[10px] font-semibold uppercase tracking-[0.14em] ${hero ? "text-white/60" : "text-muted-foreground"}`}
         >
           {label}
         </div>
         <Icon className={`h-4 w-4 ${hero ? "text-white/70" : "text-muted-foreground"}`} />
       </div>
-      <div className="mt-3 font-display text-2xl font-bold">{value}</div>
+      <div className="relative mt-3 font-display text-2xl font-bold tracking-tight">{value}</div>
     </div>
   );
 }
