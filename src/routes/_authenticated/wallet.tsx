@@ -252,7 +252,13 @@ function Overview({ profile, totals, tx, pendingW }: any) {
           <span className="text-xs text-muted-foreground">{tx.length} entries</span>
         </div>
         {tx.length === 0 ? (
-          <div className="p-8 text-center text-sm text-muted-foreground">No transactions yet.</div>
+          <div className="p-10 text-center">
+            <WalletIcon className="mx-auto h-8 w-8 text-muted-foreground/60" />
+            <div className="mt-3 font-display text-base font-semibold">No transactions yet</div>
+            <p className="mx-auto mt-1 max-w-xs text-sm text-muted-foreground">
+              Your ledger activity — rewards, stakes, transfers — will appear here.
+            </p>
+          </div>
         ) : (
           <ul className="divide-y divide-border">
             {tx.map((t: any) => (
